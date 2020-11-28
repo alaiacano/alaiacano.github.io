@@ -7,15 +7,15 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Developing Data Pipelines" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Someone at work recently asked for some tips on developing data pipelines. These are the sorts of Big Data jobs that we write in Scio but you might also use (py)spark, scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize1. TLDR for people familiar with at least one of these: Scio/SCollection == Spark/RDD == Scalding/TypedPipe. &#8617;" />
-<meta property="og:description" content="Someone at work recently asked for some tips on developing data pipelines. These are the sorts of Big Data jobs that we write in Scio but you might also use (py)spark, scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize1. TLDR for people familiar with at least one of these: Scio/SCollection == Spark/RDD == Scalding/TypedPipe. &#8617;" />
+<meta name="description" content="Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time." />
+<meta property="og:description" content="Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time." />
 <link rel="canonical" href="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html" />
 <meta property="og:url" content="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html" />
 <meta property="og:site_name" content="Adam Laiacano" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-11-27T20:18:32-05:00" />
 <script type="application/ld+json">
-{"headline":"Developing Data Pipelines","dateModified":"2020-11-27T20:18:32-05:00","datePublished":"2020-11-27T20:18:32-05:00","url":"http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html"},"description":"Someone at work recently asked for some tips on developing data pipelines. These are the sorts of Big Data jobs that we write in Scio but you might also use (py)spark, scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize1. TLDR for people familiar with at least one of these: Scio/SCollection == Spark/RDD == Scalding/TypedPipe. &#8617;","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"headline":"Developing Data Pipelines","dateModified":"2020-11-27T20:18:32-05:00","datePublished":"2020-11-27T20:18:32-05:00","url":"http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html"},"description":"Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Adam Laiacano" /></head>
 <body><header class="site-header" role="banner">
@@ -45,17 +45,17 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>Someone at work recently asked for some tips on developing data pipelines. These are the sorts of Big Data jobs that we write in <a href="https://www.github.com/spotify/scio">Scio</a> but you might also use (py)spark, scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>.</p>
+    <p>Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time.</p>
 
-<p>The original question was coming from someone used to using python/jupyter for data manipulation, and was looking for tips in transitioning from a “quick iteration” development process to a “wait this takes <em>how long</em> to run?” development process. Submitting jobs takes time, processing lots of data takes time (and money), inspecting results requires hunting down storage locations in some cloud storage bucket, errors are opaque and might take a long time to materialize.</p>
+<p>At Spotify, we use <a href="https://www.github.com/spotify/scio">Scio</a> for this sort of processing and have thousands of jobs running every day<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup>. (Py)Spark, Scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote">2</a></sup>.</p>
 
-<p>So here are some tips I’ve found useful to shorten the iteration cycle.</p>
+<p>In this environment, executing your code (“submitting a job”) takes time, processing lots of data takes time (and money), inspecting results requires hunting down storage locations in some cloud storage bucket, errors are opaque and might take a long time to materialize. I put together a few tips for someone transitioning from a “quick iteration” development process to a “wait this takes <em>how long</em> to run?” development process.</p>
 
 <h3 id="lean-on-types">Lean on types</h3>
 
-<p>Without sparking a flame war, I’ve found that scala’s type system &amp; compiler are helpful when writing code. You know that things will <em>probably</em> run reasonably well if it compiles. Python is perfectly happy sending strings to functions that expect integers, even if you have type hints. Scala will break on that and the IDE (intellij is king) helps a lot. That doesn’t mean there aren’t logical errors or the elusive <code class="language-plaintext highlighter-rouge">RuntimeException</code> in there!</p>
+<p>Scala’s type system &amp; compiler are extremely helpful when writing this kind of code. You know that things will <em>probably</em> run reasonably well if it compiles. Python is perfectly happy sending strings to functions that expect integers, even if you have type hints. Scala will break on that and the IDE (intellij is king) helps a lot. That doesn’t mean there aren’t logical errors or the elusive <code class="language-plaintext highlighter-rouge">RuntimeException</code> in there!</p>
 
-<p>You often have a lot of chained operations in a data pipeline. For example, say you have a data set with all of the city populations in the world and want to get all of the state populations within the US.</p>
+<p>You’re going to end up chaining a lot of <code class="language-plaintext highlighter-rouge">map</code>, <code class="language-plaintext highlighter-rouge">filter</code>, <code class="language-plaintext highlighter-rouge">groupBy</code> and other operations together. For example, say you have a data set with all of the city populations in the world and want to get all of the state populations within the US. This requires a <code class="language-plaintext highlighter-rouge">filter</code> to keep only cities in the US, then a <code class="language-plaintext highlighter-rouge">map</code> to extract the state (province) name and population from the <code class="language-plaintext highlighter-rouge">City</code> object, then a <code class="language-plaintext highlighter-rouge">sumByKey</code> to sum all of the cities in that state.</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">City</span><span class="o">(</span><span class="n">country</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">province</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">city</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">population</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
 
@@ -67,13 +67,20 @@
   <span class="c1">// ...and all of the rest of the cities</span>
 <span class="o">))</span>
 
-<span class="k">val</span> <span class="nv">statePopulations</span><span class="k">:</span> <span class="kt">SCollection</span><span class="o">[</span><span class="kt">?????</span><span class="o">]</span> <span class="k">=</span> <span class="n">cities</span>
+<span class="k">val</span> <span class="nv">statePopulations</span><span class="k">:</span> <span class="kt">SCollection</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span> <span class="n">cities</span>
   <span class="o">.</span><span class="py">filter</span> <span class="o">{</span> <span class="n">row</span> <span class="k">=&gt;</span> <span class="nv">row</span><span class="o">.</span><span class="py">country</span> <span class="o">==</span> <span class="s">"US"</span> <span class="o">}</span>          <span class="c1">// SCollection[City]</span>
   <span class="o">.</span><span class="py">map</span> <span class="o">{</span> <span class="n">row</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nv">row</span><span class="o">.</span><span class="py">province</span><span class="o">,</span> <span class="nv">row</span><span class="o">.</span><span class="py">population</span><span class="o">)</span> <span class="o">}</span>  <span class="c1">// SCollection[(String, Int)]</span>
   <span class="o">.</span><span class="py">sumByKey</span>                                       <span class="c1">// SCollection[(String, Int)]</span>
 </code></pre></div></div>
 
-<p>IDEs like intellij or vscode (with scala metals) will tell you what type of data is inside of your SCollection at each step in the chain. Some plugins will even show you the type</p>
+<p>IDEs like <a href="https://www.jetbrains.com/idea/">IntelliJ</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> (with the Scala Metals plugin) will tell you what type of data is inside of your <code class="language-plaintext highlighter-rouge">SCollection</code> at each step in the chain, as I’ve done in the comments above. The IDE will tell you that <code class="language-plaintext highlighter-rouge">statePopulations</code> is in fact a <code class="language-plaintext highlighter-rouge">SCollection[(String, Int)]</code> and will tell you if it’s a type mismatch.</p>
+
+<p>Some people like to define the variable first:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">statePopulations</span><span class="k">:</span> <span class="kt">SCollection</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span> <span class="n">cities</span><span class="o">...</span>
+</code></pre></div></div>
+
+<p>And others like to leave the type definition empty and ask the IDE to fill it in once all the code is written. It’s helpful either way.</p>
 
 <h3 id="tests-and-debugger">Tests and debugger</h3>
 
@@ -85,20 +92,50 @@
   <li>Checking that the output matches expectations</li>
 </ul>
 
-<p>You can run the test using an IDE debugger and place breakpoints in the scio job to make sure the values are what you expect at various points in the pipeline. This is probably going to be most similar to the iterative experience in a jupyter notebook, but setting up all of the mocked test data can be annoying (especially if your input data is a complex format with lots of embedded records). For good, reliable code you’ll write these tests eventually anyway!</p>
+<p>A simple example of a <a href="https://github.com/spotify/scio/blob/master/scio-examples/src/main/scala/com/spotify/scio/examples/WordCount.scala"><code class="language-plaintext highlighter-rouge">WordCount</code> job</a> would look like this:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="nn">com.spotify.scio.examples</span>
+
+<span class="k">import</span> <span class="nn">com.spotify.scio.io._</span>
+<span class="k">import</span> <span class="nn">com.spotify.scio.testing._</span>
+
+<span class="k">class</span> <span class="nc">WordCountTest</span> <span class="k">extends</span> <span class="nc">PipelineSpec</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nv">inData</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">"a b c d e"</span><span class="o">,</span> <span class="s">"a b a b"</span><span class="o">,</span> <span class="s">""</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nv">expected</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">"a: 3"</span><span class="o">,</span> <span class="s">"b: 3"</span><span class="o">,</span> <span class="s">"c: 1"</span><span class="o">,</span> <span class="s">"d: 1"</span><span class="o">,</span> <span class="s">"e: 1"</span><span class="o">)</span>
+
+  <span class="s">"WordCount"</span> <span class="n">should</span> <span class="s">"count correctly"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="nc">JobTest</span><span class="o">[</span><span class="kt">com.spotify.scio.examples.WordCount.</span><span class="k">type</span><span class="o">]</span>
+      <span class="o">.</span><span class="py">args</span><span class="o">(</span><span class="s">"--input=in.txt"</span><span class="o">,</span> <span class="s">"--output=out.txt"</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">input</span><span class="o">(</span><span class="nc">TextIO</span><span class="o">(</span><span class="s">"in.txt"</span><span class="o">),</span> <span class="n">inData</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">output</span><span class="o">(</span><span class="nc">TextIO</span><span class="o">(</span><span class="s">"out.txt"</span><span class="o">))(</span><span class="n">coll</span> <span class="k">=&gt;</span> <span class="n">coll</span> <span class="n">should</span> <span class="nf">containInAnyOrder</span><span class="o">(</span><span class="n">expected</span><span class="o">))</span>
+      <span class="o">.</span><span class="py">run</span><span class="o">()</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>You can run the test using an IDE debugger and place breakpoints in the Scio job to make sure the values are what you expect at various points in the pipeline. <strong>This is probably going to be most similar to the iterative experience in a Jupyter notebook.</strong> Setting up all of the mocked test data can be annoying (especially if your input data is a complex format with lots of embedded records). For good, reliable code you’ll write these tests eventually anyway!</p>
 
 <h3 id="use-a-lot-of-counters">Use a lot of counters.</h3>
 
-<p>There are different types of <a href="https://spotify.github.io/scio/examples/MetricsExample.scala.html">counters</a> that you can increment on certain conditions to make sure you do/don’t see what you are looking for.</p>
+<p>There are different types of <a href="https://spotify.github.io/scio/examples/MetricsExample.scala.html">counters</a> that you can increment on certain conditions to make sure you do/don’t see what you are looking for. Some of the counters that Scio provides are:</p>
 
-<p>For long-term monitoring of data quality, these counters (Hadoop and Spark have similar concepts) can be recorded and monitored. At Spotify, we have a service that can send Pagerduty alerts if certain counter thresholds are not met.</p>
+<ul>
+  <li>Incremental counter to be incremented inside the pipeline (the most common use case that I’ve seen)</li>
+  <li>Distribution to track min, max, count, sum, mean</li>
+  <li>Gauge to track the latest value of a certain metric (this is more useful in a streaming context than batch processing)</li>
+</ul>
 
-<h3 id="use-the-dataflow-graph">Use the Dataflow graph</h3>
+<p>For long-term monitoring of data quality, these counters (Hadoop and Spark have similar concepts) can be recorded and monitored. At Spotify, we have a service that can send PagerDuty alerts if certain counter thresholds are not met or are exceeded.</p>
 
-<p><img src="/assets/monitoring-side-input-read.png" alt="Datflow graph example" />
-This one is related to counters and a bit Dataflow-specific. You can click on any node in the Dataflow graph when it is running and see the number of input and output elements. For example, if you’re doing an innerJoin and you see <code class="language-plaintext highlighter-rouge">X</code> input records from one SCollection and <code class="language-plaintext highlighter-rouge">Y</code> input records from the other, you should see <code class="language-plaintext highlighter-rouge">X (union on key) Y</code> output records. You probably have some intuition of what that number should be, and can confirm it in the job execution UI. If you don’t see what you expect, something could be wrong in the join. This also applies to <code class="language-plaintext highlighter-rouge">filter</code> or <code class="language-plaintext highlighter-rouge">flatMap</code> functions, and many more.</p>
+<h3 id="use-the-computation-graph-ui">Use the computation graph UI</h3>
 
-<p>In scio, you can also use <code class="language-plaintext highlighter-rouge">.withName("a description of this step")</code> on any SCollection. So for example:</p>
+<p><img src="/assets/monitoring-side-input-read.png" alt="Datflow graph example" /></p>
+
+<p>The image above is a Dataflow computation graph from the <a href="https://cloud.google.com/dataflow/docs/guides/using-monitoring-intf">Cloud Dataflow docs</a> that we see whenever we run a Scio job. You can click on any node in the Dataflow graph when it is running and see the number of input and output elements. For example, if you’re doing an inner join of two <code class="language-plaintext highlighter-rouge">SCollection</code>s and you see <code class="language-plaintext highlighter-rouge">X</code> input records from one <code class="language-plaintext highlighter-rouge">SCollection</code> and <code class="language-plaintext highlighter-rouge">Y</code> input records from the other, you should see <code class="language-plaintext highlighter-rouge">X (union on key) Y</code> output records.</p>
+
+<p>As the developer, you probably have some intuition of what that number should be, and can confirm it in the job execution UI. If you don’t see what you expect, something could be wrong in the join. This also applies to <code class="language-plaintext highlighter-rouge">filter</code> or <code class="language-plaintext highlighter-rouge">flatMap</code> functions, and many more.</p>
+
+<p>In Scio, you can also use <code class="language-plaintext highlighter-rouge">.withName("a description of this step")</code> on any SCollection. So for example:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">sc</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="o">,</span><span class="mi">5</span><span class="o">,</span><span class="mi">6</span><span class="o">,</span><span class="mi">7</span><span class="o">))</span>
   <span class="o">.</span><span class="py">filter</span><span class="o">(</span><span class="n">e</span> <span class="k">=&gt;</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
@@ -106,32 +143,27 @@ This one is related to counters and a bit Dataflow-specific. You can click on an
   <span class="o">.</span><span class="py">map</span><span class="o">(</span> <span class="o">...</span> <span class="n">the</span> <span class="n">next</span> <span class="n">thing</span> <span class="o">...)</span>
 </code></pre></div></div>
 
-<p>The filter node in the Dataflow graph will have your supplied name, and you’d expect that the number of output elements should be about half as much as the input.</p>
+<p>The <code class="language-plaintext highlighter-rouge">filter</code> node in the Dataflow graph will show your supplied name, and you’d expect that the number of output elements should be about half as much as the input.</p>
 
-<p>The <a href="https://cloud.google.com/dataflow/docs/guides/using-monitoring-intf">Cloud Dataflow docs</a> have some more great tips on using the monitoring interface.</p>
+<h3 id="output-previews-to-bigquery">Output previews to Bigquery</h3>
 
-<h3 id="output-to-bigquery">Output to Bigquery</h3>
-
-<p>I always save a copy of my result to BQ when developing pipelines, even if it eventually stores its output in a different format. It lets you visually inspect it and do all of the tricks you’re used to doing via SQL. You can use <a href="https://spotify.github.io/scio/io/Type-Safe-BigQuery.html#bigquerytype-totable"><code class="language-plaintext highlighter-rouge">@BigQueryType.toTable</code></a> to annotate any scala case class and then <a href="https://spotify.github.io/scio/io/Type-Safe-BigQuery.html#type-safe-bigquery-with-scio">save it as a BQ table</a></p>
-
-<p>I have seen some implementations of a <code class="language-plaintext highlighter-rouge">bqTap</code> function that will take snapshots of an SCollection at various points. The use looks like this:</p>
-
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">sc</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="o">,</span><span class="mi">5</span><span class="o">,</span><span class="mi">6</span><span class="o">,</span><span class="mi">7</span><span class="o">))</span>
-  <span class="o">.</span><span class="py">filter</span><span class="o">(</span><span class="n">e</span> <span class="k">=&gt;</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
-  <span class="o">.</span><span class="py">bqTap</span><span class="o">(</span><span class="s">"my-project:my-dataset.evens_only"</span><span class="o">)</span>
-  <span class="o">.</span><span class="py">map</span><span class="o">(</span> <span class="o">...</span> <span class="n">the</span> <span class="n">next</span> <span class="n">thing</span> <span class="o">...)</span>
-</code></pre></div></div>
+<p>I always save a copy of my result to BQ (or Redshift, or Snowflake, or whatever) when developing pipelines, even if it eventually stores its output in a different format. It lets you visually inspect the results and do all of the tricks you’re used to doing via SQL. You can use <a href="https://spotify.github.io/scio/io/Type-Safe-BigQuery.html#bigquerytype-totable"><code class="language-plaintext highlighter-rouge">@BigQueryType.toTable</code></a> to annotate any scala case class and then <a href="https://spotify.github.io/scio/io/Type-Safe-BigQuery.html#type-safe-bigquery-with-scio">save it as a BQ table</a></p>
 
 <p>Just be careful not to store decrypted PII in your debugging!</p>
 
 <h3 id="run-on-a-subset-of-data">Run on a subset of data</h3>
 
-<p>If you can limit the amount of data read or processed (either by filtering, or processing one day’s worth of data instead of multiple, etc) that will speed up the iteration process.</p>
+<p>If you can limit the amount of data being read or processed (either by filtering/sampling within the job, or processing one day’s worth of data instead of multiple, etc) that will speed up the iteration process.</p>
+
+<p>Hopefully some of these ideas will be useful for anyone transitioning from working with libraries like pandas or dplyr to a larger, slower, distributed computation environment.</p>
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
     <li id="fn:1" role="doc-endnote">
-      <p>TLDR for people familiar with at least one of these: Scio/<code class="language-plaintext highlighter-rouge">SCollection</code> == Spark/<code class="language-plaintext highlighter-rouge">RDD</code> == Scalding/<code class="language-plaintext highlighter-rouge">TypedPipe</code>. <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+      <p>Scio is a Scala DSL for Apache Beam, which we run on Google Cloud Dataflow. This means we write our logic as Scala functions and it gets executed on a cluster of machines, which Google provides as a managed service. <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>TLDR for people familiar with at least one of these: Scio/<code class="language-plaintext highlighter-rouge">SCollection</code> == Spark/<code class="language-plaintext highlighter-rouge">RDD</code> == Scalding/<code class="language-plaintext highlighter-rouge">TypedPipe</code>. <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
