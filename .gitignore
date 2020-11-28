@@ -14,7 +14,7 @@ _site
 /test/tmp/
 /test/version_tmp/
 /tmp/
-.ruby-verison
+.ruby-version
 
 # Used by dotenv library to load environment variables.
 # .env
