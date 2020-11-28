@@ -1,0 +1,217 @@
+---
+layout: post
+title: "Cogroup: The GOAT of big data."
+date: 2020-12-01 00:00:00 -0500
+categories: data-engineering cogroup
+---
+
+Joining two datasets together is one of the most common and important operations you'll use in data pipelines. Anyone familiar with joining datasets in SQL or R/pandas will likely be familiar with some the different kinds of joins: `INNER`, `LEFT`, `RIGHT`, `OUTER` (if not, don't sweat - I'll cover them here). But in a distributed Big Data :tm: world, there are more considerations to make. Particularly "hash" or "map-side" joins, and "skew" joins, and the all-powerful cogroup. It's important to understand when to use each of these, and what advantages they can give you.
+
+<!-- ```python
+import pandas as pd
+users = pd.DataFrame({
+  'userid': [1, 2, 3, 4, 5],
+  'state': ['MA', 'NY', 'MA', 'CA', 'NE']
+})
+
+purchases = pd.DataFrame({
+  'itemid': ["a", "b" "c", "d", "e"],
+  'userid': [4, 1, 2, 2, 7]
+})
+
+outer = pd.merge(users, purchases, how='outer')
+left = pd.merge(users, purchases, how='left')
+right = pd.merge(users, purchases, how='right')
+inner = pd.merge(users, purchases, how='inner')
+``` -->
+
+At its core, what we are trying to do is collect all information about a given key (an item_id, a day of the week, a cohort of users, etc) from two or more collections of data. For the purposes of this blog post, we'll assume that these collections of data are very large (millions of unique keys) and that the operation is too large to be done on a single machine, and perhaps requires more flexibility than what you would do in a distributed SQL warehouse like redshift or Bigquery.
+
+Code-wise, demos will be in scala since that is what is used for things like spark, scalding, and scio - which all have a very similar API.
+
+Data-wise, I'll work through joining these two sample data collections. Each are a list of tuples where the first is a `String` and will be our key, and the second is a different type and will be the values we want to join.
+
+```scala
+val data1: List[(String, Double)] = List(
+  ("a", 1),
+  ("b",2),
+  ("b", 2.1),
+  ("d", 4)
+)
+val data2: List[(String, String)] = List(
+  ("a", "aye"),
+  ("b", "bee"),
+  ("c", "sea")
+)
+```
+
+<!-- Here they are in tables:
+
+| key | value |
+| --- | ----- |
+| a   | 1.0   |
+| b   | 2.0   |
+| b   | 2.1   |
+| d   | 4.0   |
+
+And
+
+| key | value |
+| --- | ----- |
+| a   | aye   |
+| b   | bee   |
+| c   | sea   | -->
+
+# It all starts with `cogroup`
+
+A `cogroup` operation is the parent operation for all standard inner, outer, left, and right joins.
+
+When co-grouping two Collections, they first need to be _keyed_ on a particular value. It's common for collections like `SCollection` or `RDD` have special conventions when they contain a `Tuple2`, such as `SCollection[(String, String)]`. Any join-like operation will assume the first element in the tuple is the Key to join on, and the second is the Value associated with that key.
+
+A `cogroup` operates on two or more Collections containing Key/Value pairs, and will shuffle all items that share a key the same machine in your cluster (perhaps a specific CPU core in some frameworks), and provide an `Iterable` of the values from each Collection. Here's an example function signature from scio to describe a cogroup of two `SCollections`:
+
+```scala
+// An SCollection in scio is comparable to spark's RDD or scalding's TypedPipe
+def cogroup[KEY, A, B](a: SCollection[(KEY, A)], b: SCollection[(KEY, B)]): SCollection[(KEY, (Iterable[A], Iterable[B]))]
+```
+
+Thinking of the types of joins that we might want to do, you can see some rules that we could apply to the result of this cogroup:
+
+- If either the resulting `Iterable[A]` or `Iterable[B]` is empty, it means that `inner` joins won't emit anything for this key.
+- If `Iterable[A]` is empty, it means that a leftJoin won't emit anything for this key.
+- If `Iterable[B]` is empty, it means a rightJoin won't emit anything for this key.
+- Outer joins are happy as long as either `Iterable[A]` or `Iterable[B]` is non-empty, which is going to exist 100% of the time.
+
+## Digging into cogroups
+
+Let's look at an actual implementation in scala. We can defined a cogroup as the function below. It takes iterables that share a key and turns them each into a `Map(key -> Iterable(value))`.
+
+From there, it emits a tuple of `(key, (Iterable(a values), Iterable(b values)))`. If either `a` or `b` doesn't contain a particular key, the cogroup will emit an empty `Iterable` in its place.
+
+```scala
+def cogroup[KEY, A, B](a: Seq[(KEY, A)], b: Seq[(KEY, B)]): Seq[(KEY, (Iterable[A], Iterable[B]))] = {
+  // groupMap is a helper in `scala.collections` for doing a groupBy then performing a map
+  // operation on the result - in this case dropping the key from the resulting
+  // Iterable[(KEY, A)]. In scio/spark/etc, this is the equivalent of just using groupBy
+  val aGrouped: Map[KEY, Seq[A]] = a.groupMap(_._1)(_._2)
+  val bGrouped: Map[KEY, Seq[B]] = b.groupMap(_._1)(_._2)
+
+  def coGroupByKey(keyValue: KEY): (KEY, (Iterable[A], Iterable[B])) = {
+    (
+      keyValue, (
+        aGrouped.getOrElse(keyValue, Seq.empty[A]),
+        bGrouped.getOrElse(keyValue, Seq.empty[B])
+      )
+    )
+  }
+
+  (aGrouped.keys ++ bGrouped.keys).toSeq.map(coGroupByKey)
+}
+```
+
+And here's what it would produce:
+
+```scala
+val data1: List[(String, Double)] = List(("a", 1), ("b",2), ("b", 2.1), ("d", 4))
+val data2: List[(String, String)] = List(("a", "aye"), ("b", "bee"), ("c", "sea"))
+
+val cogrouped: List[(String, (List[Double], List[String]))] = cogroup(data1, data2)
+```
+
+Here's a table of the results:
+
+| key | Iterable A       | Iterable B  |
+| --- | ---------------- | ----------- |
+| a   | `List(1.0)`      | `List(aye)` |
+| b   | `List(2.0, 2.1)` | `List(bee)` |
+| c   | empty list       | `List(sea)` |
+| d   | `List(4.0)`      | empty list  |
+
+This looks correct! Some things of note:
+
+- `data1` has two elements with a key `"b"` and you see both of them in the resulting List.
+- `data1` doesn't have a key `"c"` so the output has an empty List in its place.
+- `data2` doesn't have a key `"d"` so the output has an empty List in its place.
+
+There's one interesting thing that is in here - the use of `groupMap` on each of the inputs (which, as written, is functionally similar to `groupBy` in spark/scio/scalding etc). Why are we doing the extra work of making an `O(N + K)` pass through each of the inputs (where N is the number of elements and K is the number of unique keys)? In a distributed system, this is what is called the "shuffle" stage.
+
+In a distributed data processing system, it will move all elements with the same `KEY` value to a single worker CPU. Then those batches of data that share a key will be lumped together to be processed one at a time.
+
+Here's an illustration. Let's say we have 2 possible workers. The first step is to read in all of the data, then determine which worker it needs to be copied to.
+
+Worker 1:
+
+| key | value | DESTINATION |
+| --- | ----- | ----------- |
+| a   | 1.0   | worker 1    |
+| b   | 2.0   | worker 2    |
+
+Worker 2:
+
+| key | value | DESTINATION |
+| --- | ----- | ----------- |
+| d   | 4.0   | worker 1    |
+| b   | 2.1   | worker 2    |
+
+Worker 2:
+
+| key | value | DESTINATION |
+| --- | ----- | ----------- |
+| c   | sea   | worker 2    |
+| b   | bee   | worker 2    |
+| a   | aye   | worker 1    |
+
+THEN WE SHUFFLE. During the shuffle phase, data is copied (over a network) to the appropriate worker machine. This can be a very expensive operation! When it's done, the locality of our data looks something like this:
+
+| worker ID | key | values                       |
+| --------- | --- | ---------------------------- |
+| 1         | a   | `(List(1.0), List(aye))`     |
+| 2         | b   | `(List(2.0, 2.1), List(bee)` |
+| 2         | c   | `(List(), List(sea))`        |
+| 1         | d   | `(List(4.0), List())`        |
+
+At this point, our data is cogrouped. We have tuples of Lists of values all corresponding to the same key, living on the same worker machines. However, it doesn't look quite like what you would expect from a join. Now that it's cogrouped, we can apply our inner/left/right/outer join logic.
+
+# Moving from cogroup to joins
+
+The final step to move from `cogroup` to any of the joins is to flatten the `Iterable`s containing the values into zero or more elements (or "rows").
+
+I'll show implementations of each kind (inner, left, right, outer) below. One important thing to note is that
+
+[scio has a more optimized version of this](https://github.com/spotify/scio/blob/5041284977ed5661a6bebb82037b973d7b4c1729/scio-core/src/main/scala/com/spotify/scio/util/ArtisanJoin.scala#L92-L111) but still starts with their (more optimized) version of cogroup first.
+
+## Inner join
+
+In inner joins, we only care about situations where both the `a` and `b` collections share a key.
+
+```scala
+def innerJoin[KEY, A, B](a: Iterable[(KEY, A)], b: Iterable[(KEY, B)]): Iterable[(KEY, (A, B))] = {
+  val cogrouped: Seq[(KEY, (Iterable[A], Iterable[B]))] = cogroup(a, b)
+
+  cogrouped.flatMap {
+    // if either Iterable is empty - return nothing!
+    case (key, (aIter, bIter)) if aIter.isEmpty || bIter.isEmpty => Seq.empty
+    // otherwise, iterate through both Iterables and return one element per pair.
+    case (key, (aIter, bIter)) =>
+      bIter.flatMap { bValue =>
+        aIter.map { aValue =>
+          (key, (aValue, bValue))
+        }
+      }
+  }
+}
+innerJoin(data1, data2)
+```
+
+And here is the result:
+
+| key | Value        |
+| --- | ------------ |
+| a   | `(1.0, aye)` |
+| b   | `(2.0, bee)` |
+| b   | `(2.1, bee)` |
+
+This looks like what we'd expect from an inner join:
+
+- The rows in the cogroup that had an empty list for one of the elements (c, d) are gone.
+- The key `b` which had two values in `data1` is now spread to two rows of output.
