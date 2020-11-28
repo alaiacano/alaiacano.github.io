@@ -54,6 +54,7 @@ For long-term monitoring of data quality, these counters (Hadoop and Spark have 
 
 ### Use the Dataflow graph
 
+![Datflow graph example](/assets/monitoring-side-input-read.png)
 This one is related to counters and a bit Dataflow-specific. You can click on any node in the Dataflow graph when it is running and see the number of input and output elements. For example, if you're doing an innerJoin and you see `X` input records from one SCollection and `Y` input records from the other, you should see `X (union on key) Y` output records. You probably have some intuition of what that number should be, and can confirm it in the job execution UI. If you don't see what you expect, something could be wrong in the join. This also applies to `filter` or `flatMap` functions, and many more.
 
 In scio, you can also use `.withName("a description of this step")` on any SCollection. So for example:
@@ -66,6 +67,8 @@ sc.parallelize(List(1,2,3,4,5,6,7))
 ```
 
 The filter node in the Dataflow graph will have your supplied name, and you'd expect that the number of output elements should be about half as much as the input.
+
+The [Cloud Dataflow docs](https://cloud.google.com/dataflow/docs/guides/using-monitoring-intf) have some more great tips on using the monitoring interface.
 
 ### Output to Bigquery
 

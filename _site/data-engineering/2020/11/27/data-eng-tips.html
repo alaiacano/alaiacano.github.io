@@ -95,7 +95,8 @@
 
 <h3 id="use-the-dataflow-graph">Use the Dataflow graph</h3>
 
-<p>This one is related to counters and a bit Dataflow-specific. You can click on any node in the Dataflow graph when it is running and see the number of input and output elements. For example, if you’re doing an innerJoin and you see <code class="language-plaintext highlighter-rouge">X</code> input records from one SCollection and <code class="language-plaintext highlighter-rouge">Y</code> input records from the other, you should see <code class="language-plaintext highlighter-rouge">X (union on key) Y</code> output records. You probably have some intuition of what that number should be, and can confirm it in the job execution UI. If you don’t see what you expect, something could be wrong in the join. This also applies to <code class="language-plaintext highlighter-rouge">filter</code> or <code class="language-plaintext highlighter-rouge">flatMap</code> functions, and many more.</p>
+<p><img src="/assets/monitoring-side-input-read.png" alt="Datflow graph example" />
+This one is related to counters and a bit Dataflow-specific. You can click on any node in the Dataflow graph when it is running and see the number of input and output elements. For example, if you’re doing an innerJoin and you see <code class="language-plaintext highlighter-rouge">X</code> input records from one SCollection and <code class="language-plaintext highlighter-rouge">Y</code> input records from the other, you should see <code class="language-plaintext highlighter-rouge">X (union on key) Y</code> output records. You probably have some intuition of what that number should be, and can confirm it in the job execution UI. If you don’t see what you expect, something could be wrong in the join. This also applies to <code class="language-plaintext highlighter-rouge">filter</code> or <code class="language-plaintext highlighter-rouge">flatMap</code> functions, and many more.</p>
 
 <p>In scio, you can also use <code class="language-plaintext highlighter-rouge">.withName("a description of this step")</code> on any SCollection. So for example:</p>
 
@@ -106,6 +107,8 @@
 </code></pre></div></div>
 
 <p>The filter node in the Dataflow graph will have your supplied name, and you’d expect that the number of output elements should be about half as much as the input.</p>
+
+<p>The <a href="https://cloud.google.com/dataflow/docs/guides/using-monitoring-intf">Cloud Dataflow docs</a> have some more great tips on using the monitoring interface.</p>
 
 <h3 id="output-to-bigquery">Output to Bigquery</h3>
 
