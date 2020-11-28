@@ -16,9 +16,8 @@
 title: Adam Laiacano
 # email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  👋 I’m a staff engineer at Spotify, working on infrastructure for 
-  Machine Learning and Recommendation Systems. I’m interested in 
-  buidling tools for (ML) developer productivity, punk rock from the late 90’s.
+  I'll attempt to infrequently post about ML Systems, Data Engineering, and 
+  other things I come up with from time to time.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: adamlaiacano
