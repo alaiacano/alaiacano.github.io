@@ -7,24 +7,6 @@ categories: data-engineering cogroup
 
 Joining two datasets together is one of the most common and important operations you'll use in data pipelines. Anyone familiar with joining datasets in SQL or R/pandas will likely be familiar with some the different kinds of joins: `INNER`, `LEFT`, `RIGHT`, `OUTER`. In a distributed Big Data :tm: world, these and others are all backed by the all-powerful **`cogroup`** operation.
 
-<!-- ```python
-import pandas as pd
-users = pd.DataFrame({
-  'userid': [1, 2, 3, 4, 5],
-  'state': ['MA', 'NY', 'MA', 'CA', 'NE']
-})
-
-purchases = pd.DataFrame({
-  'itemid': ["a", "b" "c", "d", "e"],
-  'userid': [4, 1, 2, 2, 7]
-})
-
-outer = pd.merge(users, purchases, how='outer')
-left = pd.merge(users, purchases, how='left')
-right = pd.merge(users, purchases, how='right')
-inner = pd.merge(users, purchases, how='inner')
-``` -->
-
 At its core, what we are trying to do is collect all information about a given key (a user_id or item_id, etc) from two or more collections of data. For the purposes of this blog post, we'll assume that these collections of data are very large (millions of unique keys) and that the operation is too large to be done on a single machine, and perhaps requires more flexibility than what you would do in a distributed SQL warehouse like Redshift or Bigquery.
 
 Code-wise, demos will be in Scala since that is what is used for things like Spark, Scalding, and Scio - which all have a very similar API.
@@ -44,23 +26,6 @@ val data2: List[(String, String)] = List(
   ("c", "sea")
 )
 ```
-
-<!-- Here they are in tables:
-
-| key | value |
-| --- | ----- |
-| a   | 1.0   |
-| b   | 2.0   |
-| b   | 2.1   |
-| d   | 4.0   |
-
-And
-
-| key | value |
-| --- | ----- |
-| a   | aye   |
-| b   | bee   |
-| c   | sea   | -->
 
 # It all starts with `cogroup`
 
@@ -111,7 +76,7 @@ def cogroup[KEY, A, B](a: Iterable[(KEY, A)], b: Iterable[(KEY, B)]): Iterable[(
     )
   }
 
-  (aGrouped.keys ++ bGrouped.keys).toSeq.map(coGroupByKey)
+  (aGrouped.keys ++ bGrouped.keys).toSet.map(coGroupByKey)
 }
 ```
 
@@ -121,15 +86,20 @@ And here's what it would produce:
 val data1: List[(String, Double)] = List(("a", 1), ("b",2), ("b", 2.1), ("d", 4))
 val data2: List[(String, String)] = List(("a", "aye"), ("b", "bee"), ("c", "sea"))
 
-val cogrouped: List[(String, (List[Double], List[String]))] = cogroup(data1, data2)
+val cogrouped: Iterable[(String, (Iterable[Double], Iterable[String]))] = cogroup(data1, data2)
+
 ```
 
-| key | Iterable A       | Iterable B  |
-| --- | ---------------- | ----------- |
-| a   | `List(1.0)`      | `List(aye)` |
-| b   | `List(2.0, 2.1)` | `List(bee)` |
-| c   | empty list       | `List(sea)` |
-| d   | `List(4.0)`      | empty list  |
+The result is:
+
+```scala
+Iterable(
+  (a,(Iterable(1.0),      Iterable("aye"))),
+  (b,(Iterable(2.0, 2.1), Iterable("bee"))),
+  (c,(Iterable(),         Iterable("sea"))),
+  (d,(Iterable(4.0),      Iterable()))
+)
+```
 
 This looks correct! Some things of note:
 
@@ -137,7 +107,11 @@ This looks correct! Some things of note:
 - `data1` doesn't have a key `"c"` so the output has an empty List in its place.
 - `data2` doesn't have a key `"d"` so the output has an empty List in its place.
 
-There's one interesting thing that is in here - the use of `groupMap` on each of the inputs (which, as written, is functionally similar to `groupBy` in spark/scio/scalding etc). Why are we doing the extra work of making an `O(N + K)` pass through each of the inputs (where N is the number of elements and K is the number of unique keys)? In a distributed system, this is what is called the "shuffle" stage.
+There's one thing to note in this implmentation of `cogroup` - the use of `groupMap` on each of the inputs (which, as written, is functionally similar to `groupBy` in Spark/Scio/Scalding etc).
+
+We are making an initial pass through all of the input data to build a key -> value(s) mapping for all of our data, so that we can then do fast lookups to build the final result.
+
+In a distributed system, this is what is called the "shuffle" stage. Instead of building a large `Map[KEY, Iterable[A]]` and `Map[KEY, Iterable[B]]` _in memory_, it moves all data with the same `KEY` to a common machine, so that we can then process the `Iterable[A]` and `Iterable[B]` associated with the particular `KEY`. This requires moving lots of data around and is often the most expensive part of a data pipeline. It's worth considering when and how you shuffle your data.
 
 # Moving from cogroup to joins
 
