@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Code Interviews | Adam Laiacano</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Code Interviews" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:" />
+<meta property="og:description" content="For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:" />
+<link rel="canonical" href="http://localhost:4000/interviews/2021/08/10/interviews.html" />
+<meta property="og:url" content="http://localhost:4000/interviews/2021/08/10/interviews.html" />
+<meta property="og:site_name" content="Adam Laiacano" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-10T20:18:32-05:00" />
+<script type="application/ld+json">
+{"headline":"Code Interviews","dateModified":"2021-08-10T20:18:32-05:00","datePublished":"2021-08-10T20:18:32-05:00","url":"http://localhost:4000/interviews/2021/08/10/interviews.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/interviews/2021/08/10/interviews.html"},"description":"For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Adam Laiacano" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Adam Laiacano</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Me</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Code Interviews</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2021-08-10T20:18:32-05:00" itemprop="datePublished">Aug 10, 2021
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:</p>
+
+<ul>
+  <li>Programming (sometimes 2 of these).</li>
+  <li>Systems design.</li>
+  <li>1-2 specialization-specific interviews: ML, Data Engineering, Frontend, Distributed Systems, etc.</li>
+  <li>An interview with a hiring manager. Sometimes this is about “leadership” or other general topics depending on the role.</li>
+</ul>
+
+<p>The programming interview is probably the most hated. I personally don’t like being on either side of these interviews. Leetcode-style problems that test <em>CS fundamentals</em> can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it’s a common complaint among senior engineers that they have to study material that they haven’t used in years to get a job where they won’t use it. This tweet, from the author of <a href="https://brew.sh/">Homebrew</a>, lives in infamy.</p>
+
+<blockquote class="twitter-tweet" data-dnt="true" data-theme="dark"><p lang="en" dir="ltr">Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off.</p>&mdash; Max Howell (@mxcl) <a href="https://twitter.com/mxcl/status/608682016205344768?ref_src=twsrc%5Etfw">June 10, 2015</a></blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>There are a few questions that people like to use as punching bags. Invert a binary tree. Reverse a linked list. Perform breadth-first and/or depth-first tree traversals. Anything to do with heaps. I recently read the <a href="https://www.hillelwayne.com/post/linked-lists/">history of the “Reverse A Linked List” problem</a> and find this take fascintating. The goal wasn’t to reverse a linked list, it was to make sure you are familiar with pointer manipulation in c, and reversing the linked list was a good way to demonstrate that.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>In the early 80’s, C programmers were in high demand. Interviewers used questions that specifically tested your experience with C, which meant problems involving lots of pointer manipulation. This ingrained LL questions as a cultural institution in many places, especially places doing lots of low-level work, like Microsoft and Google. From there, it was exported to the wider software world, and lacking the original context, people assumed it was about “testing CS fundamentals” or “quick thinking”.
+</code></pre></div></div>
+
+<p>The fact remains that it’s an important part of an interview to make sure that a software engineer can code. So if we’re going to be asked to reverse a linked list, what is the real underlying assessment? In 2021, that is probably no longer about pointer manipulation. What should it be about, then? Let’s dig in and have some fun.</p>
+
+<h2 id="reversing-a-linked-list">Reversing a Linked List</h2>
+
+<p>We’ll start with the classic algorithm question. My solution is <a href="https://gist.github.com/alaiacano/35a63e7631b60641fc0342f31461b80d#file-ll-py">here</a>. Inserting new nodes at the head of the list is <code class="language-plaintext highlighter-rouge">O(1)</code> and reversing the list is <code class="language-plaintext highlighter-rouge">O(N)</code>, and does so by moving pointers around and not making a full copy of the list in memory.</p>
+
+<p>To populate, print, reverse, and then print the list again, we’d do this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">ll</span> <span class="kn">import</span> <span class="n">LinkedList</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">LinkedList</span><span class="p">()</span>
+    <span class="n">ll</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ll</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ll</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ll</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">f"The list is: </span><span class="si">{</span><span class="n">ll</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="c1"># The list is: 4, 3, 2, 1
+</span>    <span class="n">ll</span><span class="p">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">f"The reversed list is </span><span class="si">{</span><span class="n">ll</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="c1"># Tthe list is: 1, 2, 3, 4
+</span></code></pre></div></div>
+
+<p>Wonderful. In the real world, we would have used <a href="https://github.com/python/cpython/blob/e5c8ddb1714fb51ab1defa24352c98e0f01205dc/Objects/listobject.c#L1042-L1056"><code class="language-plaintext highlighter-rouge">List.reverse</code></a> from the standard library, but this produces the same result. Would we have run the code in a module like this? Probably not!</p>
+
+<h2 id="enter-the-linkedlist-pipeline">Enter the LinkedList Pipeline</h2>
+
+<p>Let’s rewrite how we use this <code class="language-plaintext highlighter-rouge">LinkedList</code> class into something a little more <em>modern</em>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="m">1</span>
+<span class="na">tasks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">populate</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">push_values</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">elements</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="m">1</span>
+        <span class="pi">-</span> <span class="m">2</span>
+        <span class="pi">-</span> <span class="m">3</span>
+        <span class="pi">-</span> <span class="m">4</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">print</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">print_list</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">reverse</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">reverse_list</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">print</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">reversed</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">print_list</span>
+</code></pre></div></div>
+
+<p>YAML! Nice. Yaml is fun to joke about, but Vicki Boykis posted <a href="https://twitter.com/vboykis/status/1407821631997759488">a twitter poll</a> about which languages people use in Data Science/ML and the most common reply was “does yaml count?” If everyone asks, it means yes.</p>
+
+<p>The above yaml does not actually do anything, and this is ostensibly a post about software coding interviews, so let’s build something that reverses a linked list given this pipeline definition. Is this overkill for the goal of reversing a 4-element linked list? Sure. But it’s a good analog to the modular systems that we are paid to build and use as software engineers (especially Data/ML engineers). It’s the kind of thing that we actually do every day, and should be familiar with. In other words, <strong>Components are the new Pointers.</strong></p>
+
+<p>So let’s dive in.</p>
+
+<h3 id="coding-problem-implement-a-framework-to-execute-this-pipeline">Coding problem: Implement a framework to execute this pipeline</h3>
+
+<p>First we’ll need to define a <code class="language-plaintext highlighter-rouge">Task</code> class to carry out the logic of each <code class="language-plaintext highlighter-rouge">task</code> defined in the yaml. A <code class="language-plaintext highlighter-rouge">Task</code> may take an input <code class="language-plaintext highlighter-rouge">LinkedList</code> from a previous <code class="language-plaintext highlighter-rouge">Task</code>, performs some operation on it, and produces an output. Here’s the interface:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">ll</span> <span class="kn">import</span> <span class="n">LinkedList</span>
+
+<span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lst</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_lst</span><span class="p">:</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">lst</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_name</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">linked_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinkedList</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_lst</span>
+
+    <span class="o">@</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>It takes an input <code class="language-plaintext highlighter-rouge">LinkedList</code> and a <code class="language-plaintext highlighter-rouge">name</code> for the task, and has an abstract <code class="language-plaintext highlighter-rouge">execute</code> method that will have to mutate <code class="language-plaintext highlighter-rouge">self._lst</code> (which is maybe not ideal but we’ll work with it). Let’s extend <code class="language-plaintext highlighter-rouge">Task</code> to perform the actions seen in the yaml: <code class="language-plaintext highlighter-rouge">push_values</code>, <code class="language-plaintext highlighter-rouge">reverse_list</code>, and <code class="language-plaintext highlighter-rouge">print_list</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="k">class</span> <span class="nc">PushValuesTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">logging</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">f"Populating the list with: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s">'elements'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">"elements"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_lst</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ReverseListTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">logging</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Reversing the list"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_lst</span> <span class="o">=</span> <span class="n">ReverseListTask</span><span class="p">.</span><span class="n">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_lst</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">):</span>
+        <span class="n">prev</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">current</span><span class="p">:</span> <span class="n">Node</span> <span class="o">=</span> <span class="n">lst</span><span class="p">.</span><span class="n">head</span>
+        <span class="k">while</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="nb">next</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="nb">next</span>
+            <span class="n">current</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="n">prev</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">current</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="nb">next</span>
+        <span class="n">lst</span><span class="p">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">prev</span>
+        <span class="k">return</span> <span class="n">lst</span>
+
+<span class="k">class</span> <span class="nc">PrintListTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"the list is"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_lst</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>You can see that I moved the <code class="language-plaintext highlighter-rouge">reverse</code> method into <code class="language-plaintext highlighter-rouge">ReverseListTask</code>, so we can remove the method from the <code class="language-plaintext highlighter-rouge">LinkedList</code> class. One benefit of this task-based approach is that the logic that we want to perform is located within the <code class="language-plaintext highlighter-rouge">Task</code>, and this helps us achieve that task. None of the other <code class="language-plaintext highlighter-rouge">Task</code>s need to know about reversing a list, and having code around to do unnecessary tasks might become step towards “Dependency Hell.”</p>
+
+<p>Our yaml config has an <code class="language-plaintext highlighter-rouge">action</code> field that we can use to decide which of these subclasses to use for each step in the pipeline. Let’s use a factory function for that <sup id="a1"><a href="#f1">1</a></sup>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">task_factory</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lst</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">):</span>
+    <span class="s">"""
+    For the given `action`, produces the appropriate subclass of `Task`.
+    """</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s">"push_values"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PushValuesTask</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lst</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s">"print_list"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PrintListTask</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lst</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s">"reverse_list"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ReverseListTask</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lst</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">f"Unknown action: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now it’s time to think about parsing the yaml config itself. We’ll put each <code class="language-plaintext highlighter-rouge">task</code> in the yaml array into a <code class="language-plaintext highlighter-rouge">TaskDefinition</code> dataclass to hold all of the parameters and values:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="o">@</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">TaskDefinition</span><span class="p">:</span>
+    <span class="s">"""
+    Converts a task from the yaml config into a dataclass.
+
+    Required fields are `name` and `action`. All other key -&gt; value pairs listed in the yaml file will be passed to a `params` dict.
+    """</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">action</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">"name"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"task is missing a required 'name' field"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">"action"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"task is missing a required 'action' field"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">"config"</span> <span class="ow">in</span> <span class="n">d</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s">"config"</span><span class="p">].</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">TaskDefinition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s">"name"</span><span class="p">],</span> <span class="n">action</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s">"action"</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>At this point, we have</p>
+
+<ul>
+  <li>Broken each step of the pipeline into a “task,” which is described by a <code class="language-plaintext highlighter-rouge">TaskDefinition</code>.</li>
+  <li>Made an abstract <code class="language-plaintext highlighter-rouge">Task</code> class that can be extended to perform the actual work defined by each stage of the pipeline.</li>
+  <li>Made a helper function to convert an <code class="language-plaintext highlighter-rouge">action</code> (string) from the <code class="language-plaintext highlighter-rouge">TaskDefinition</code> into the appropriate <code class="language-plaintext highlighter-rouge">Task</code>.</li>
+</ul>
+
+<p>Now we can write a <code class="language-plaintext highlighter-rouge">Parser</code> class to read the whole yaml file and turn it into a list of <code class="language-plaintext highlighter-rouge">TaskDefinitions</code> that we’ll need to run. It will have three methods:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parse</code> to read the yaml and produce a list of <code class="language-plaintext highlighter-rouge">TaskDefinition</code>s</li>
+  <li><code class="language-plaintext highlighter-rouge">describe</code> to print a preview of which tasks will be executed</li>
+  <li><code class="language-plaintext highlighter-rouge">run</code> to create each <code class="language-plaintext highlighter-rouge">Task</code> in the pipeline and call <code class="language-plaintext highlighter-rouge">execute</code> on it</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">tasks</span> <span class="kn">import</span> <span class="n">task_factory</span><span class="p">,</span> <span class="n">Task</span>
+
+<span class="k">class</span> <span class="nc">Parser</span><span class="p">:</span>
+    <span class="s">"""
+    Parses the pipeline yaml into a list of TaksDefinitions, and provides methods to describe and ultimately execute the pipeline.
+    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">pipeline</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">api_version</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">pipeline</span><span class="p">[</span><span class="s">"apiVersion"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">api_version</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"I only know API v1"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">"tasks"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">pipeline</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"malformed yaml - you need an array of tasks"</span><span class="p">)</span>
+
+        <span class="c1"># parse the task definitions
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TaskDefinition</span><span class="p">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">pipeline</span><span class="p">[</span><span class="s">"tasks"</span><span class="p">]</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"No tasks parsed yet"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">"~~ Tasks that will execute ~~"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">f"</span><span class="si">{</span><span class="n">t</span><span class="p">.</span><span class="n">action</span><span class="si">}</span><span class="s"> - </span><span class="si">{</span><span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s"> - </span><span class="si">{</span><span class="n">t</span><span class="p">.</span><span class="n">params</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">prev_task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">for</span> <span class="n">task_def</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">:</span>
+            <span class="n">prev_ll</span><span class="p">:</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">prev_task</span><span class="p">.</span><span class="n">linked_list</span> <span class="k">if</span> <span class="n">prev_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">LinkedList</span><span class="p">()</span>
+            <span class="n">task</span><span class="p">:</span> <span class="n">Task</span> <span class="o">=</span> <span class="n">task_factory</span><span class="p">(</span><span class="n">task_def</span><span class="p">.</span><span class="n">action</span><span class="p">,</span> <span class="n">task_def</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">prev_ll</span><span class="p">)</span>
+            <span class="n">logging</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"~~~"</span><span class="p">)</span>
+            <span class="n">task</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="o">**</span><span class="n">task_def</span><span class="p">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">prev_task</span> <span class="o">=</span> <span class="n">task</span>
+</code></pre></div></div>
+
+<p>Now when we execute <code class="language-plaintext highlighter-rouge">parser.py</code> we’ll do this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="s">"pipeline.yaml"</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">parse</span><span class="p">()</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">describe</span><span class="p">()</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>And we get the expected output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python pipeline.py
+
+~~ Tasks that will execute ~~
+push_values - populate the list - {'elements': [1, 2, 3, 4]}
+print_list - print the list - {}
+reverse_list - reverse the list - {}
+print_list - print the reversed list - {}
+INFO:root:~~~
+INFO:root:Populating the list with: [1, 2, 3, 4]
+INFO:root:~~~
+the list is
+4, 3, 2, 1
+INFO:root:~~~
+INFO:root:Reversing the list
+INFO:root:~~~
+the list is
+1, 2, 3, 4
+</code></pre></div></div>
+
+<p>We did it! We reversed a linked list. Want to add <a href="https://www.geeksforgeeks.org/top-20-linked-list-interview-question/">some other task for a <code class="language-plaintext highlighter-rouge">LinkedList</code></a>? No problem, we just have to:</p>
+
+<ul>
+  <li>Define a new <code class="language-plaintext highlighter-rouge">action</code> for the yaml config.</li>
+  <li>Extend <code class="language-plaintext highlighter-rouge">Task</code> with a new subclass and implement <code class="language-plaintext highlighter-rouge">execute</code>.</li>
+  <li>Write some unit &amp; integration tests, which are glaringly absent from this post!</li>
+  <li>Add a line to <code class="language-plaintext highlighter-rouge">task_factory</code> to produce the new class for the appropriate value of <code class="language-plaintext highlighter-rouge">action</code>.</li>
+  <li>Document it and communicate it to the users of your platform.</li>
+</ul>
+
+<h2 id="the-twist">The twist</h2>
+
+<p>Most coding interviews have a secret second phase. If a candidate solves the problem with lots of time to spare, we can ask an add-on question. Is this fair? Probably not. If a candidate can pass the interview by solving just the first part, they shouldn’t be able to fail it by attempting the second. Hopefully by solving the second part of the question, they considered for a higher title.</p>
+
+<p>In this case, we could make a more complex task execution graph. The execution graph looks like this in v1.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>push_values -&gt; print_list -&gt; reverse_list -&gt; print_list
+</code></pre></div></div>
+
+<p>The first <code class="language-plaintext highlighter-rouge">print_list</code> task and the <code class="language-plaintext highlighter-rouge">reverse_list</code> tasks are really operating on the same input (<code class="language-plaintext highlighter-rouge">print_list</code> is really just a side effect). We could allow each task to specify its parent and re-draw the graph to look like this.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>               / -&gt; print_values
+              /
+push_values -
+              \
+               \ -&gt; reverse_list -&gt; print_values
+</code></pre></div></div>
+
+<p>So we can change the yaml config format a bit to include an <code class="language-plaintext highlighter-rouge">id</code> for each task and a <code class="language-plaintext highlighter-rouge">parent</code> indicating the ID of upstream task. The new config will look like this. It’s a breaking change, so we’ve moved to <code class="language-plaintext highlighter-rouge">apiVersion: 2</code>.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="m">2</span>
+<span class="na">tasks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">populate</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">push_values</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">elements</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="m">1</span>
+        <span class="pi">-</span> <span class="m">2</span>
+        <span class="pi">-</span> <span class="m">3</span>
+        <span class="pi">-</span> <span class="m">4</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">print</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">print_list</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">2</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">4</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">reverse</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">reverse_list</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">reverse</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">list</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">second</span><span class="nv"> </span><span class="s">time"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">reverse_list</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">5</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">print</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">double</span><span class="nv"> </span><span class="s">reversed</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">print_list</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">6</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="m">5</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">print</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">single</span><span class="nv"> </span><span class="s">reversed</span><span class="nv"> </span><span class="s">list"</span>
+    <span class="na">action</span><span class="pi">:</span> <span class="s">print_list</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="m">4</span>
+    <span class="na">parent</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">config</span><span class="pi">:</span>
+      <span class="na">demo_sleep_time</span><span class="pi">:</span> <span class="m">1</span>
+</code></pre></div></div>
+
+<p>Now we can implement a <code class="language-plaintext highlighter-rouge">Parser2</code> that’s a little more advanced. Rather than a <code class="language-plaintext highlighter-rouge">List[Task]</code> we’ll create a dictionary from <code class="language-plaintext highlighter-rouge">task_id -&gt; List[downstream Tasks]</code>, and step through all of the tasks. Here’s how <code class="language-plaintext highlighter-rouge">run</code> is implemented now (see the link at the bottom for the full code):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Parser2</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">pipeline</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">TaskDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskDefinition</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_ll</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">,</span> <span class="n">visited</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="n">visited</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+
+        <span class="c1"># run the task
+</span>        <span class="n">task_definition</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">task_definitions</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
+        <span class="n">logging</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">f"Visiting task </span><span class="si">{</span><span class="n">task_definition</span><span class="p">.</span><span class="nb">id</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">parent_task</span> <span class="o">=</span> <span class="n">task_factory</span><span class="p">(</span>
+            <span class="n">task_definition</span><span class="p">.</span><span class="n">action</span><span class="p">,</span> <span class="n">task_definition</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">input_ll</span>
+        <span class="p">)</span>
+        <span class="n">parent_task</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="o">**</span><span class="n">task_definition</span><span class="p">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># If the task has children that have not yet been executed, run those recursively.
+</span>        <span class="k">for</span> <span class="n">child_task</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="p">[</span><span class="n">task_id</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">child_task</span><span class="p">.</span><span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="c1"># kinda gross here, but python only does pass-by-reference and we need to be able to mutate
+</span>                <span class="c1"># the LinkedList within each task, so we deepcopy.
+</span>                <span class="n">ll</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">parent_task</span><span class="p">.</span><span class="n">linked_list</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">run_task</span><span class="p">(</span><span class="n">child_task</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">ll</span><span class="p">,</span> <span class="n">visited</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">first_task_id</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph</span><span class="p">[</span><span class="bp">None</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="nb">id</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">run_task</span><span class="p">(</span><span class="n">first_task_id</span><span class="p">,</span> <span class="n">LinkedList</span><span class="p">(),</span> <span class="nb">set</span><span class="p">([]))</span>
+</code></pre></div></div>
+
+<p>I made a <em>graph</em> of parent and child tasks, and then step through starting at the head and hitting every child, passing the output of the parent to each of its children tasks. <strong>It’s a depth-first graph traversal</strong> just hiding there right in front of us!</p>
+
+<!-- ## Appendix: advantages / disadvantages of the pipeline framework
+
+Here are some advantages that I see to breaking work up like this.
+
+1. By abstracting the implementation away from the user, we, the infra/platform team, are able to provide an easy human-readable interface that requires little to no code.
+2. We are able to move the work of each task into its own self-contained _component_ (in practice, this usually means a Docker container).
+3. Since all logic is "component-ized," we can execute the tasks in various environments - from local execution to a fully distributed computing environment - depending on the resources required.
+4. Each component can come with its own `requirements.txt` file (or equivalent) which will help a bit with incompatible dependencies. In fact, there's no real reason all of the components even need to be in the same programming language!
+5. We can submit these tasks to various schedulers to be executed, and swap them on the backend if needed (eg migrating from Airflow to Argo or similar).
+
+There is an implied separation of execution from definition of the tasks to be performed - both technically and _organizationally_. This is a common thing at most large tech companies who split into Infrastructure and Product organizations. It's also key to industry trends such as [data mesh](https://towardsdatascience.com/what-is-a-data-mesh-and-how-not-to-mesh-it-up-210710bb41e0), which breaks data engineering tasks into three components: "data sources, data infrastructure, and domain-oriented data pipelines managed by functional owners."
+
+In this case, the code that executes these tasks will be owned and maintained by a _patform_ or _infrastructure team_, and the yaml will be owned by a _product team_ that uses the provided platform.
+
+## Let's talk about the downsides
+
+There are some disadvantages to an approach like this as well. The above list of steps to add any new functionality can be pretty cumbersome, and it is all modifying code that we said is owned by the platform team. It will also likely require asking engineers to upgrade to the latest package version in order to get the newest functionality.
+
+The biggest issue is that there currently isn't a way for a product team to implement their own `Task` logic (because the `task_factory` needs to be able to parse it), meaning everything needs to be committed to the platform team's repo. With that comes the need for the platform team to review PRs that contain business logic, product teams are blocked by the platform's release cycles (or, more likely, teams will start using dev/snapshot releases in production), and all kinds of other headaches.
+
+Teams will also likely only upgrade when they _need_ the new functionality, meaning you'll always have teams running older versions of your platform. It's likely that the teams/projects that are reluctant to update to the latest version are the ones with the more stable and critical systems. You need to make sure that changes are backwards compatible. -->
+
+<h2 id="wrap-up">Wrap-up</h2>
+
+<p>Software interviews will continue to be hard forever. I could have asked <a href="https://leetcode.com/tag/depth-first-search/">any number of questions</a> that require implementing a DFS - why go through all of these hoops with pipelines and tasks? Because workflow engines like Airflow, Prefect, Dagster, Luigi, etc are things that we use day-to-day, and we should have enough familiarity with them that we can implement a rudimentary version in the span of a 1-hour interview. It demonstrates that we can code, that we have a good understanding of one of our most common tools, and that we can even bust out the ol’ graph traversal algorithm when we actually need to use it.</p>
+
+<p><b id="f1">1</b> A factory! In Python!? They’re out there, folks. <a href="#a1">↩</a></p>
+
+  </div><a class="u-url" href="/interviews/2021/08/10/interviews.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Adam Laiacano</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Adam Laiacano</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://www.twitter.com/adamlaiacano"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">adamlaiacano</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>I&#39;ll attempt to infrequently post about ML Systems, Data Engineering, and  other things I come up with from time to time.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
