@@ -1,0 +1,16 @@
+apiVersion: 1
+tasks:
+  - name: "populate the list"
+    action: push_values
+    config:
+      elements:
+        - 1
+        - 2
+        - 3
+        - 4
+  - name: "print the list"
+    action: print_list
+  - name: "reverse the list"
+    action: reverse_list
+  - name: "print the reversed list"
+    action: print_list
