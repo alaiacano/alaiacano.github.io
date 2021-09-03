@@ -1,11 +1,9 @@
 ---
 layout: post
 title: "Code Interviews"
-date: 2021-09-10 20:18:32 -0500
+date: 2021-08-10 20:18:32 -0500
 categories: interviews
 ---
-
-<div class="thingie">wtf</div>
 
 For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:
 
