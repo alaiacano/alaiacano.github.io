@@ -42,6 +42,9 @@ class Task(ABC):
 
     @abstractmethod
     def execute(self, *args, **kwargs):
+        """
+        This method must be implemented by any Task subclass to carry out it's job-specific logic.
+        """
         pass
 
 

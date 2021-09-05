@@ -47,12 +47,12 @@
   <li>An interview with a hiring manager. Sometimes this is about “leadership” or other general topics depending on the role.</li>
 </ul>
 
-<p>The programming interview is probably the most hated. I personally don’t like being on either side of these interviews. Leetcode-style problems that test <em>CS fundamentals</em> can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it’s a common complaint among senior engineers that they have to study material that they haven’t used in years to get a job where they won’t use it. This tweet, from the author of <a href="https://brew.sh/">Homebrew</a>, lives in infamy.</p>
+<p>The programming interview is probably the most hated. I personally don’t like being on either side of these interviews. Leetcode-style problems that test <em>CS fundamentals</em> can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it’s a <a href="https://twitter.com/PhDemetri/status/1425579904205299721">common</a> <a href="https://twitter.com/CubicleApril/status/1424011476889702402">complaint</a> among senior engineers that they have to study material that they haven’t used in years to get a job where they won’t use it. This tweet, from the author of <a href="https://brew.sh/">Homebrew</a>, lives in infamy.</p>
 
 <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark"><p lang="en" dir="ltr">Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off.</p>&mdash; Max Howell (@mxcl) <a href="https://twitter.com/mxcl/status/608682016205344768?ref_src=twsrc%5Etfw">June 10, 2015</a></blockquote>
 <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<p>There are a few questions that people like to use as punching bags. Invert a binary tree. Reverse a linked list. Perform breadth-first and/or depth-first tree traversals. Anything to do with heaps. I recently read the <a href="https://www.hillelwayne.com/post/linked-lists/">history of the “Reverse A Linked List” problem</a> and find this take fascintating. The goal wasn’t to reverse a linked list, it was to make sure you are familiar with pointer manipulation in c, and reversing the linked list was a good way to demonstrate that.</p>
+<p>There are a few questions that people like to use as punching bags. Invert a binary tree. Reverse a linked list. Perform breadth-first and/or depth-first tree traversals. Anything to do with heaps. I recently read the <a href="https://www.hillelwayne.com/post/linked-lists/">history of the “Reverse A Linked List” problem</a> and find this take fascintating. The goal wasn’t to reverse a linked list, it was to make sure you are familiar with pointer manipulation in C, and reversing the linked list was a good way to demonstrate that.</p>
 
 <blockquote>
   <p>In the early 80’s, C programmers were in high demand. Interviewers used questions that specifically tested your experience with C, which meant problems involving lots of pointer manipulation. This ingrained LL questions as a cultural institution in many places, especially places doing lots of low-level work, like Microsoft and Google. From there, it was exported to the wider software world, and lacking the original context, people assumed it was about “testing CS fundamentals” or “quick thinking”.</p>
@@ -76,33 +76,35 @@
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=pipeline1.yaml" type="text/javascript"></script>
 
-<p>YAML! Nice. Yaml is fun to joke about, but Vicki Boykis posted <a href="https://twitter.com/vboykis/status/1407821631997759488">a twitter poll</a> about which languages people use in Data Science/ML and the most common reply was “does yaml count?” If everyone asks, it means yes.</p>
+<p>YAML! Nice. YAML is fun to joke about, but Vicki Boykis posted <a href="https://twitter.com/vboykis/status/1407821631997759488">a twitter poll</a> about which languages people use in Data Science/ML and the most common reply was “does YAML count?” If everyone asks, it means yes.</p>
 
-<p>The above yaml does not actually do anything, and this is ostensibly a post about software coding interviews, so let’s build something that reverses a linked list given this pipeline definition. Is this overkill for the goal of reversing a 4-element linked list? Sure. But it’s a good analog to the modular systems that we are paid to build and use as software engineers (especially Data/ML engineers). It’s the kind of thing that we actually do every day, and should be familiar with. In other words, <strong>Components are the new Pointers.</strong></p>
+<p>The above YAML does not actually do anything, and this is ostensibly a post about software coding interviews, so let’s build something that reverses a linked list given this pipeline definition. Is this overkill for the goal of reversing a 4-element linked list? Sure. But it’s a good analog to the modular systems that we are paid to build and use as software engineers, especially Data/ML engineers.</p>
 
-<p>So let’s dive in.</p>
+<p>It is increasingly common to use this kind of “pipeline-as-YAML” configuration to piece together a workflow of pre-built components <sup id="a1"><a href="#f1">1</a></sup>. Some real examples of this are <a href="https://www.tensorflow.org/tfx/guide/understanding_tfx_pipelines#component">TFX components</a>, <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learn Pipelines</a>, or <a href="https://airflow.apache.org/docs/apache-airflow/1.10.12/concepts.html">Airflow DAGs</a>. Perhaps <em>components</em> are the new <em>pointers</em>. If that’s the case, let’s make a coding question that will use this context to assess coding ability.</p>
 
 <h3 id="coding-problem-implement-a-framework-to-execute-this-pipeline">Coding problem: Implement a framework to execute this pipeline</h3>
 
-<p>First we’ll need to define a <code class="language-plaintext highlighter-rouge">Task</code> class to carry out the logic of each <code class="language-plaintext highlighter-rouge">task</code> defined in the yaml. A <code class="language-plaintext highlighter-rouge">Task</code> may take an input <code class="language-plaintext highlighter-rouge">LinkedList</code> from a previous <code class="language-plaintext highlighter-rouge">Task</code>, performs some operation on it, and produces an output. Here’s the interface:</p>
+<p>First we’ll need to define a <code class="language-plaintext highlighter-rouge">Task</code> class to carry out the logic of each <code class="language-plaintext highlighter-rouge">task</code> defined in the YAML. A <code class="language-plaintext highlighter-rouge">Task</code> may take an input <code class="language-plaintext highlighter-rouge">LinkedList</code> from a previous <code class="language-plaintext highlighter-rouge">Task</code>, performs some operation on it, and produces an output. Here’s the interface:</p>
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=base_task.py" type="text/javascript"></script>
 
-<p>It takes an input <code class="language-plaintext highlighter-rouge">LinkedList</code> and a <code class="language-plaintext highlighter-rouge">name</code> for the task, and has an abstract <code class="language-plaintext highlighter-rouge">execute</code> method that will have to mutate <code class="language-plaintext highlighter-rouge">self._lst</code> (which is maybe not ideal but we’ll work with it). Let’s extend <code class="language-plaintext highlighter-rouge">Task</code> to perform the actions seen in the yaml: <code class="language-plaintext highlighter-rouge">push_values</code>, <code class="language-plaintext highlighter-rouge">reverse_list</code>, and <code class="language-plaintext highlighter-rouge">print_list</code>.</p>
+<p>It takes an input <code class="language-plaintext highlighter-rouge">LinkedList</code> and a <code class="language-plaintext highlighter-rouge">name</code> for the task, and has an abstract <code class="language-plaintext highlighter-rouge">execute</code> method that will have to mutate <code class="language-plaintext highlighter-rouge">self._lst</code>. As an interviewer, I’d ask whether mutating <code class="language-plaintext highlighter-rouge">self._lst</code> is ideal here. “Pipelines” are a pretty functional concept, where side effects are not ideal. How would the candidate account for this mutation and make sure it’s safe? This is a great opportunity for a conversation about ways of building software, which you don’t really get when the problem is to implement a single algorithm.</p>
+
+<p>With that, let’s extend <code class="language-plaintext highlighter-rouge">Task</code> to perform the actions seen in the YAML: <code class="language-plaintext highlighter-rouge">push_values</code>, <code class="language-plaintext highlighter-rouge">reverse_list</code>, and <code class="language-plaintext highlighter-rouge">print_list</code>.</p>
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=tasks.py" type="text/javascript"></script>
 
 <p>You can see that I moved the <code class="language-plaintext highlighter-rouge">reverse</code> method into <code class="language-plaintext highlighter-rouge">ReverseListTask</code>, so we can remove the method from the <code class="language-plaintext highlighter-rouge">LinkedList</code> class. One benefit of this task-based approach is that the logic that we want to perform is located within the <code class="language-plaintext highlighter-rouge">Task</code>, and this helps us achieve that task. None of the other <code class="language-plaintext highlighter-rouge">Task</code>s need to know about reversing a list, and having code around to do unnecessary tasks might become step towards “Dependency Hell.”</p>
 
-<p>Our yaml config has an <code class="language-plaintext highlighter-rouge">action</code> field that we can use to decide which of these subclasses to use for each step in the pipeline. Let’s use a factory function for that <sup id="a1"><a href="#f1">1</a></sup>.</p>
+<p>Our YAML config has an <code class="language-plaintext highlighter-rouge">action</code> field that we can use to decide which of these subclasses to use for each step in the pipeline. Let’s use a factory function for that <sup id="a2"><a href="#f2">2</a></sup>.</p>
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=task_factory.py" type="text/javascript"></script>
 
-<p>Now it’s time to think about parsing the yaml config itself. We’ll put each <code class="language-plaintext highlighter-rouge">task</code> in the yaml array into a <code class="language-plaintext highlighter-rouge">TaskDefinition</code> dataclass to hold all of the parameters and values:</p>
+<p>Now it’s time to think about parsing the YAML config itself. We’ll put each <code class="language-plaintext highlighter-rouge">task</code> in the YAML array into a <code class="language-plaintext highlighter-rouge">TaskDefinition</code> dataclass to hold all of the parameters and values:</p>
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=task_definition.py" type="text/javascript"></script>
 
-<p>At this point, we have</p>
+<p>At this point, we have:</p>
 
 <ul>
   <li>Broken each step of the pipeline into a “task,” which is described by a <code class="language-plaintext highlighter-rouge">TaskDefinition</code>.</li>
@@ -110,10 +112,10 @@
   <li>Made a helper function to convert an <code class="language-plaintext highlighter-rouge">action</code> (string) from the <code class="language-plaintext highlighter-rouge">TaskDefinition</code> into the appropriate <code class="language-plaintext highlighter-rouge">Task</code>.</li>
 </ul>
 
-<p>Now we can write a <code class="language-plaintext highlighter-rouge">Parser</code> class to read the whole yaml file and turn it into a list of <code class="language-plaintext highlighter-rouge">TaskDefinitions</code> that we’ll need to run. It will have three methods:</p>
+<p>Now we can write a <code class="language-plaintext highlighter-rouge">Parser</code> class to read the whole YAML file and turn it into a list of <code class="language-plaintext highlighter-rouge">TaskDefinitions</code> that we’ll need to run. It will have three methods:</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">parse</code> to read the yaml and produce a list of <code class="language-plaintext highlighter-rouge">TaskDefinition</code>s</li>
+  <li><code class="language-plaintext highlighter-rouge">parse</code> to read the YAML and produce a list of <code class="language-plaintext highlighter-rouge">TaskDefinition</code>s</li>
   <li><code class="language-plaintext highlighter-rouge">describe</code> to print a preview of which tasks will be executed</li>
   <li><code class="language-plaintext highlighter-rouge">run</code> to create each <code class="language-plaintext highlighter-rouge">Task</code> in the pipeline and call <code class="language-plaintext highlighter-rouge">execute</code> on it</li>
 </ul>
@@ -153,7 +155,7 @@ the list is
 <p>We did it! We reversed a linked list. Want to add <a href="https://www.geeksforgeeks.org/top-20-linked-list-interview-question/">some other task for a <code class="language-plaintext highlighter-rouge">LinkedList</code></a>? No problem, we just have to:</p>
 
 <ul>
-  <li>Define a new <code class="language-plaintext highlighter-rouge">action</code> for the yaml config.</li>
+  <li>Define a new <code class="language-plaintext highlighter-rouge">action</code> for the YAML config.</li>
   <li>Extend <code class="language-plaintext highlighter-rouge">Task</code> with a new subclass and implement <code class="language-plaintext highlighter-rouge">execute</code>.</li>
   <li>Write some unit &amp; integration tests, which are glaringly absent from this post!</li>
   <li>Add a line to <code class="language-plaintext highlighter-rouge">task_factory</code> to produce the new class for the appropriate value of <code class="language-plaintext highlighter-rouge">action</code>.</li>
@@ -178,7 +180,7 @@ push_values -
                \ -&gt; reverse_list -&gt; print_values
 </code></pre></div></div>
 
-<p>So we can change the yaml config format a bit to include an <code class="language-plaintext highlighter-rouge">id</code> for each task and a <code class="language-plaintext highlighter-rouge">parent</code> indicating the ID of upstream task. The new config will look like this. It’s a breaking change, so we’ve moved to <code class="language-plaintext highlighter-rouge">apiVersion: 2</code>.</p>
+<p>So we can change the YAML config format a bit to include an <code class="language-plaintext highlighter-rouge">id</code> for each task and a <code class="language-plaintext highlighter-rouge">parent</code> indicating the ID of upstream task. The new config will look like this. It’s a breaking change, so we’ve moved to <code class="language-plaintext highlighter-rouge">apiVersion: 2</code>.</p>
 
 <script src="https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=pipeline2.yaml" type="text/javascript"></script>
 
@@ -190,9 +192,12 @@ push_values -
 
 <h2 id="wrap-up">Wrap-up</h2>
 
+<!-- TODO: a note about how the original question asked the explicit question to reverse a LL to test for the implicit knowledge of C/pointers. Now we ask for the explicit knowledge of DAGs and implicitly test for "fundamentals" of tree traversal. -->
+
 <p>Software interviews will continue to be hard forever. I could have asked <a href="https://leetcode.com/tag/depth-first-search/">any number of questions</a> that require implementing a DFS - why go through all of these hoops with pipelines and tasks? Because workflow engines like Airflow, Prefect, Dagster, Luigi, etc are things that we use day-to-day, and we should have enough familiarity with them that we can implement a rudimentary version in the span of a 1-hour interview. It demonstrates that we can code, that we have a good understanding of one of our most common tools, and that we can even bust out the ol’ graph traversal algorithm when we actually need to use it.</p>
 
-<p><b id="f1">1</b> A factory! In Python!? They’re out there, folks. <a href="#a1">↩</a></p>
+<p><b id="f1">1</b> This is, of course, <a href="https://en.wikipedia.org/wiki/Pipeline_(Unix)">not a new concept</a>. <a href="#a1">↩</a>
+<b id="f2">2</b> A factory! In Python!? They’re out there, folks. <a href="#a2">↩</a></p>
 
 
       </div>
