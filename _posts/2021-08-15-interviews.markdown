@@ -12,7 +12,7 @@ For most of us, interviewing is hard. And annoying, frustrating, and stressful. 
 - 1-2 specialization-specific interviews: ML, Data Engineering, Frontend, Distributed Systems, etc.
 - An interview with a hiring manager. Sometimes this is about "leadership" or other general topics depending on the role.
 
-The programming interview is probably the most hated. I personally don't like being on either side of these interviews. Leetcode-style problems that test _CS fundamentals_ can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it's a [common](https://twitter.com/PhDemetri/status/1425579904205299721) [complaint](https://twitter.com/CubicleApril/status/1424011476889702402) among senior engineers that they have to study material that they haven't used in years to get a job where they won't use it. This tweet, from the author of [Homebrew](https://brew.sh/), lives in infamy.
+The programming interview is probably the most hated. I personally don't like being on either side of these interviews. Leetcode-style problems that test _CS fundamentals_ can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it's a [common](https://twitter.com/PhDemetri/status/1425579904205299721) [complaint](https://twitter.com/CubicleApril/status/1424011476889702402) among [senior engineers](https://twitter.com/andrew_n_carr/status/1341837026191011842) that they have to study material that they haven't used in years to get a job where they won't use it. I've certainly come out of interviews tempted to ask "Is this the sort of thing your engineers actually do?" This tweet, from the author of [Homebrew](https://brew.sh/), lives in infamy.
 
 <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark"><p lang="en" dir="ltr">Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off.</p>&mdash; Max Howell (@mxcl) <a href="https://twitter.com/mxcl/status/608682016205344768?ref_src=twsrc%5Etfw">June 10, 2015</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
@@ -152,9 +152,18 @@ I made a _graph_ of parent and child tasks, and then step through starting at th
 
 ## Wrap-up
 
-<!-- TODO: a note about how the original question asked the explicit question to reverse a LL to test for the implicit knowledge of C/pointers. Now we ask for the explicit knowledge of DAGs and implicitly test for "fundamentals" of tree traversal. -->
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">All job interview processes are flawed. They&#39;re just flawed in different ways, and some of those flaws work to your advantage and some don&#39;t. That&#39;s it, that&#39;s the newsletter.</p>&mdash; Vicki Boykis (@vboykis) <a href="https://twitter.com/vboykis/status/1316019970032070661?ref_src=twsrc%5Etfw">October 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Software interviews will continue to be hard forever. I could have asked [any number of questions](https://leetcode.com/tag/depth-first-search/) that require implementing a DFS - why go through all of these hoops with pipelines and tasks? Because workflow engines like Airflow, Prefect, Dagster, Luigi, etc are things that we use day-to-day, and we should have enough familiarity with them that we can implement a rudimentary version in the span of a 1-hour interview. It demonstrates that we can code, that we have a good understanding of one of our most common tools, and that we can even bust out the ol' graph traversal algorithm when we actually need to use it.
+The original quote that I shared suggested that asking a candidate to implement a specfic algorithm (reverse a linked list) was a vehicle for testing a broader set of knowledge (experience with writing in C). In my problem, we ask directly about the broader set of knowledge (familiarity with pipelines / DAGs), and reveal a situation where a specific algorithm needs to be used (graph traversal).
 
-<b id="f1">1</b> This is, of course, [not a new concept](<https://en.wikipedia.org/wiki/Pipeline_(Unix)>). [↩](#a1)
+My task is far more life-like, putting the candidate in a familiar situation and likely less stressful state of mind. If the candidate asks if this is what your engineers really do, you can more confidently say "yes." There is also much more opportunity to discuss design approaches and trade-offs, and a chance at the end to speculate how it could be advanced further (Async tasks? Just use Airflow?).
+
+I'll ask that you consider putting a little more effort into your programming questions than picking something straight from leetcode. It will be more enjoyable for both the interviewer and candidate, provide a better hiring signal, and allow you to base your hiring decision more on skill and experience than the candidate's luck.
+
+---
+
+<b id="f1">1</b> This idea is up for debate. Should programmers [build from scratch](https://cacm.acm.org/magazines/2008/8/5355-interview-donald-knuth-a-lifes-work-interrupted/fulltext), or stitch various services/components together (["VendorOps"](https://rachelbythebay.com/w/2020/08/14/jobs/))? I agree there's [room for both](https://twitter.com/drunkcod/status/1429422275535769606?s=21). I hope it's obvious that in this post I am focusing on the latter. [↩](#a1)
+
 <b id="f2">2</b> A factory! In Python!? They're out there, folks. [↩](#a2)
+
+Thanks to [Matt Brown](https://twitter.com/mattnworb) for feedback on this post.
