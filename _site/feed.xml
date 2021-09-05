@@ -1,6 +1,175 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-11-28T12:09:36-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Adam Laiacano</title><subtitle>I'll attempt to infrequently post about ML Systems, Data Engineering, and  other things I come up with from time to time.</subtitle><entry><title type="html">Developing Data Pipelines</title><link href="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html" rel="alternate" type="text/html" title="Developing Data Pipelines" /><published>2020-11-27T20:18:32-05:00</published><updated>2020-11-27T20:18:32-05:00</updated><id>http://localhost:4000/data-engineering/2020/11/27/data-eng-tips</id><content type="html" xml:base="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html">&lt;p&gt;Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-09-05T12:58:06-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Adam Laiacano</title><subtitle>I'll attempt to infrequently post about ML Systems, Data Engineering, and  other things I come up with from time to time.</subtitle><entry><title type="html">Code Interviews</title><link href="http://localhost:4000/interviews/2021/08/10/interviews.html" rel="alternate" type="text/html" title="Code Interviews" /><published>2021-08-10T21:18:32-04:00</published><updated>2021-08-10T21:18:32-04:00</updated><id>http://localhost:4000/interviews/2021/08/10/interviews</id><content type="html" xml:base="http://localhost:4000/interviews/2021/08/10/interviews.html">&lt;p&gt;For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:&lt;/p&gt;
 
-&lt;p&gt;At Spotify, we use &lt;a href=&quot;https://www.github.com/spotify/scio&quot;&gt;Scio&lt;/a&gt; for this sort of processing and have thousands of jobs running every day&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. (Py)Spark, Scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Programming (sometimes 2 of these).&lt;/li&gt;
+  &lt;li&gt;Systems design.&lt;/li&gt;
+  &lt;li&gt;1-2 specialization-specific interviews: ML, Data Engineering, Frontend, Distributed Systems, etc.&lt;/li&gt;
+  &lt;li&gt;An interview with a hiring manager. Sometimes this is about “leadership” or other general topics depending on the role.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The programming interview is probably the most hated. I personally don’t like being on either side of these interviews. Leetcode-style problems that test &lt;em&gt;CS fundamentals&lt;/em&gt; can be fun puzzles for some people, and are arguably a decent evaluation of junior engineers without industry experience, but it’s a &lt;a href=&quot;https://twitter.com/PhDemetri/status/1425579904205299721&quot;&gt;common&lt;/a&gt; &lt;a href=&quot;https://twitter.com/CubicleApril/status/1424011476889702402&quot;&gt;complaint&lt;/a&gt; among &lt;a href=&quot;https://twitter.com/andrew_n_carr/status/1341837026191011842&quot;&gt;senior engineers&lt;/a&gt; that they have to study material that they haven’t used in years to get a job where they won’t use it. I’ve certainly come out of interviews tempted to ask “Is this the sort of thing your engineers actually do?” This tweet, from the author of &lt;a href=&quot;https://brew.sh/&quot;&gt;Homebrew&lt;/a&gt;, lives in infamy.&lt;/p&gt;
+
+&lt;blockquote class=&quot;twitter-tweet&quot; data-dnt=&quot;true&quot; data-theme=&quot;dark&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off.&lt;/p&gt;&amp;mdash; Max Howell (@mxcl) &lt;a href=&quot;https://twitter.com/mxcl/status/608682016205344768?ref_src=twsrc%5Etfw&quot;&gt;June 10, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;There are a few questions that people like to use as punching bags. Invert a binary tree. Reverse a linked list. Perform breadth-first and/or depth-first tree traversals. Anything to do with heaps. I recently read the &lt;a href=&quot;https://www.hillelwayne.com/post/linked-lists/&quot;&gt;history of the “Reverse A Linked List” problem&lt;/a&gt; and find this take fascintating. The goal wasn’t to reverse a linked list, it was to make sure you are familiar with pointer manipulation in C, and reversing the linked list was a good way to demonstrate that.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In the early 80’s, C programmers were in high demand. Interviewers used questions that specifically tested your experience with C, which meant problems involving lots of pointer manipulation. This ingrained LL questions as a cultural institution in many places, especially places doing lots of low-level work, like Microsoft and Google. From there, it was exported to the wider software world, and lacking the original context, people assumed it was about “testing CS fundamentals” or “quick thinking”.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The fact remains that it’s an important part of an interview to make sure that a software engineer can code. So if we’re going to be asked to reverse a linked list, what is the real underlying assessment? In 2021, that is probably no longer about pointer manipulation. What should it be about, then? Let’s dig in and have some fun.&lt;/p&gt;
+
+&lt;h2 id=&quot;reversing-a-linked-list&quot;&gt;Reversing a Linked List&lt;/h2&gt;
+
+&lt;p&gt;We’ll start with the classic algorithm question. My solution is &lt;a href=&quot;https://gist.github.com/alaiacano/35a63e7631b60641fc0342f31461b80d#file-ll-py&quot;&gt;here&lt;/a&gt;. Inserting new nodes at the head of the list is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;O(1)&lt;/code&gt; and reversing the list is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;O(N)&lt;/code&gt;, and does so by moving pointers around and not making a full copy of the list in memory.&lt;/p&gt;
+
+&lt;p&gt;To populate, print, reverse, and then print the list again, we’d do this:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=run_ll.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Wonderful. In the real world, we would have used &lt;a href=&quot;https://github.com/python/cpython/blob/e5c8ddb1714fb51ab1defa24352c98e0f01205dc/Objects/listobject.c#L1042-L1056&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List.reverse&lt;/code&gt;&lt;/a&gt; from the standard library, but this produces the same result. Would we have run the code in a module like this? Probably not!&lt;/p&gt;
+
+&lt;h2 id=&quot;enter-the-linkedlist-pipeline&quot;&gt;Enter the LinkedList Pipeline&lt;/h2&gt;
+
+&lt;p&gt;Let’s rewrite how we use this &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt; class into something a little more &lt;em&gt;modern&lt;/em&gt;:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=pipeline1.yaml&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;YAML! Nice. YAML is fun to joke about, but Vicki Boykis posted &lt;a href=&quot;https://twitter.com/vboykis/status/1407821631997759488&quot;&gt;a twitter poll&lt;/a&gt; about which languages people use in Data Science/ML and the most common reply was “does YAML count?” If everyone asks, it means yes.&lt;/p&gt;
+
+&lt;p&gt;The above YAML does not actually do anything, and this is ostensibly a post about software coding interviews, so let’s build something that reverses a linked list given this pipeline definition. Is this overkill for the goal of reversing a 4-element linked list? Sure. But it’s a good analog to the modular systems that we are paid to build and use as software engineers, especially Data/ML engineers.&lt;/p&gt;
+
+&lt;p&gt;It is increasingly common to use this kind of “pipeline-as-YAML” configuration to piece together a workflow of pre-built components &lt;sup id=&quot;a1&quot;&gt;&lt;a href=&quot;#f1&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. Some real examples of this are &lt;a href=&quot;https://www.tensorflow.org/tfx/guide/understanding_tfx_pipelines#component&quot;&gt;TFX components&lt;/a&gt;, &lt;a href=&quot;https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html&quot;&gt;scikit-learn Pipelines&lt;/a&gt;, or &lt;a href=&quot;https://airflow.apache.org/docs/apache-airflow/1.10.12/concepts.html&quot;&gt;Airflow DAGs&lt;/a&gt;. Perhaps &lt;em&gt;components&lt;/em&gt; are the new &lt;em&gt;pointers&lt;/em&gt;. If that’s the case, let’s make a coding question that will use this context to assess coding ability.&lt;/p&gt;
+
+&lt;h3 id=&quot;coding-problem-implement-a-framework-to-execute-this-pipeline&quot;&gt;Coding problem: Implement a framework to execute this pipeline&lt;/h3&gt;
+
+&lt;p&gt;First we’ll need to define a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; class to carry out the logic of each &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;task&lt;/code&gt; defined in the YAML. A &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; may take an input &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt; from a previous &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt;, performs some operation on it, and produces an output. Here’s the interface:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=base_task.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;It takes an input &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt; and a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt; for the task, and has an abstract &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute&lt;/code&gt; method that will have to mutate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;self._lst&lt;/code&gt;. As an interviewer, I’d ask whether mutating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;self._lst&lt;/code&gt; is ideal here. “Pipelines” are a pretty functional concept, where side effects are not ideal. How would the candidate account for this mutation and make sure it’s safe? This is a great opportunity for a conversation about ways of building software, which you don’t really get when the problem is to implement a single algorithm.&lt;/p&gt;
+
+&lt;p&gt;With that, let’s extend &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; to perform the actions seen in the YAML: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;push_values&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reverse_list&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;print_list&lt;/code&gt;.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=tasks.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;You can see that I moved the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reverse&lt;/code&gt; method into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ReverseListTask&lt;/code&gt;, so we can remove the method from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt; class. One benefit of this task-based approach is that the logic that we want to perform is located within the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt;, and this helps us achieve that task. None of the other &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt;s need to know about reversing a list, and having code around to do unnecessary tasks might become step towards “Dependency Hell.”&lt;/p&gt;
+
+&lt;p&gt;Our YAML config has an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt; field that we can use to decide which of these subclasses to use for each step in the pipeline. Let’s use a factory function for that &lt;sup id=&quot;a2&quot;&gt;&lt;a href=&quot;#f2&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=task_factory.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Now it’s time to think about parsing the YAML config itself. We’ll put each &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;task&lt;/code&gt; in the YAML array into a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskDefinition&lt;/code&gt; dataclass to hold all of the parameters and values:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=task_definition.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;At this point, we have:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Broken each step of the pipeline into a “task,” which is described by a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskDefinition&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Made an abstract &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; class that can be extended to perform the actual work defined by each stage of the pipeline.&lt;/li&gt;
+  &lt;li&gt;Made a helper function to convert an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt; (string) from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskDefinition&lt;/code&gt; into the appropriate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now we can write a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Parser&lt;/code&gt; class to read the whole YAML file and turn it into a list of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskDefinitions&lt;/code&gt; that we’ll need to run. It will have three methods:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parse&lt;/code&gt; to read the YAML and produce a list of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskDefinition&lt;/code&gt;s&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;describe&lt;/code&gt; to print a preview of which tasks will be executed&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;run&lt;/code&gt; to create each &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; in the pipeline and call &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute&lt;/code&gt; on it&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=parser.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Now when we execute &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parser.py&lt;/code&gt; we’ll do this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;pipeline.yaml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;describe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And we get the expected output:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ python pipeline.py
+
+~~ Tasks that will execute ~~
+push_values - populate the list - {'elements': [1, 2, 3, 4]}
+print_list - print the list - {}
+reverse_list - reverse the list - {}
+print_list - print the reversed list - {}
+INFO:root:~~~
+INFO:root:Populating the list with: [1, 2, 3, 4]
+INFO:root:~~~
+the list is
+4, 3, 2, 1
+INFO:root:~~~
+INFO:root:Reversing the list
+INFO:root:~~~
+the list is
+1, 2, 3, 4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We did it! We reversed a linked list. Want to add &lt;a href=&quot;https://www.geeksforgeeks.org/top-20-linked-list-interview-question/&quot;&gt;some other task for a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LinkedList&lt;/code&gt;&lt;/a&gt;? No problem, we just have to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Define a new &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt; for the YAML config.&lt;/li&gt;
+  &lt;li&gt;Extend &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Task&lt;/code&gt; with a new subclass and implement &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Write some unit &amp;amp; integration tests, which are glaringly absent from this post!&lt;/li&gt;
+  &lt;li&gt;Add a line to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;task_factory&lt;/code&gt; to produce the new class for the appropriate value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Document it and communicate it to the users of your platform.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;the-twist&quot;&gt;The twist&lt;/h2&gt;
+
+&lt;p&gt;Most coding interviews have a secret second part. If a candidate solves the problem with lots of time to spare, we can ask an add-on question. Is this fair? Probably not. If a candidate can pass the interview by solving just the first part, they shouldn’t be able to fail it by attempting the second. Hopefully by solving the second part of the question they considered for a higher title, and not penalized for getting stuck on it.&lt;/p&gt;
+
+&lt;p&gt;In this case, we could make a more complex task execution graph. The execution graph looks like this in v1.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;push_values -&amp;gt; print_list -&amp;gt; reverse_list -&amp;gt; print_list
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;print_list&lt;/code&gt; task and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reverse_list&lt;/code&gt; tasks are really operating on the same input (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;print_list&lt;/code&gt; is really just a side effect). We could allow each task to specify its parent and re-draw the graph to look like this.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;               / -&amp;gt; print_values
+              /
+push_values -
+              \
+               \ -&amp;gt; reverse_list -&amp;gt; print_values
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So we can change the YAML config format a bit to include an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt; for each task and a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parent&lt;/code&gt; indicating the ID of upstream task. The new config will look like this. It’s a breaking change, so we’ve moved to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apiVersion: 2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=pipeline2.yaml&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Now we can implement a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Parser2&lt;/code&gt; that’s a little more advanced. Rather than a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List[Task]&lt;/code&gt; we’ll create a dictionary from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;task_id -&amp;gt; List[downstream Tasks]&lt;/code&gt;, and step through all of the tasks. Here’s how &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;run&lt;/code&gt; is implemented now (see the link at the bottom for the full code):&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/35a63e7631b60641fc0342f31461b80d.js?file=parser2.py&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;I made a &lt;em&gt;graph&lt;/em&gt; of parent and child tasks, and then step through starting at the head and hitting every child, passing the output of the parent to each of its children tasks. &lt;strong&gt;It’s a depth-first graph traversal&lt;/strong&gt; just hiding there right in front of us!&lt;/p&gt;
+
+&lt;h2 id=&quot;wrap-up&quot;&gt;Wrap-up&lt;/h2&gt;
+
+&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;All job interview processes are flawed. They&amp;#39;re just flawed in different ways, and some of those flaws work to your advantage and some don&amp;#39;t. That&amp;#39;s it, that&amp;#39;s the newsletter.&lt;/p&gt;&amp;mdash; Vicki Boykis (@vboykis) &lt;a href=&quot;https://twitter.com/vboykis/status/1316019970032070661?ref_src=twsrc%5Etfw&quot;&gt;October 13, 2020&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;The original quote that I shared suggested that asking a candidate to implement a specfic algorithm (reverse a linked list) was a vehicle for testing a broader set of knowledge (experience with writing in C). In my problem, we ask directly about the broader set of knowledge (familiarity with pipelines / DAGs), and reveal a situation where a specific algorithm needs to be used (graph traversal).&lt;/p&gt;
+
+&lt;p&gt;My task is far more life-like, putting the candidate in a familiar situation and likely less stressful state of mind. If the candidate asks if this is what your engineers really do, you can more confidently say “yes.” There is also much more opportunity to discuss design approaches and trade-offs, and a chance at the end to speculate how it could be advanced further (Async tasks? Just use Airflow?).&lt;/p&gt;
+
+&lt;p&gt;I’ll ask that you consider putting a little more effort into your programming questions than picking something straight from leetcode. It will be more enjoyable for both the interviewer and candidate, provide a better hiring signal, and allow you to base your hiring decision more on skill and experience than the candidate’s luck.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;b id=&quot;f1&quot;&gt;1&lt;/b&gt; This idea is up for debate. Should programmers &lt;a href=&quot;https://cacm.acm.org/magazines/2008/8/5355-interview-donald-knuth-a-lifes-work-interrupted/fulltext&quot;&gt;build from scratch&lt;/a&gt;, or stitch various services/components together (&lt;a href=&quot;https://rachelbythebay.com/w/2020/08/14/jobs/&quot;&gt;“VendorOps”&lt;/a&gt;)? I agree there’s &lt;a href=&quot;https://twitter.com/drunkcod/status/1429422275535769606?s=21&quot;&gt;room for both&lt;/a&gt;. I hope it’s obvious that in this post I am focusing on the latter. &lt;a href=&quot;#a1&quot;&gt;↩&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;b id=&quot;f2&quot;&gt;2&lt;/b&gt; A factory! In Python!? They’re out there, folks. &lt;a href=&quot;#a2&quot;&gt;↩&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Thanks to &lt;a href=&quot;https://twitter.com/mattnworb&quot;&gt;Matt Brown&lt;/a&gt; for feedback on this post.&lt;/p&gt;</content><author><name></name></author><category term="interviews" /><summary type="html">For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:</summary></entry><entry><title type="html">Developing Data Pipelines</title><link href="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html" rel="alternate" type="text/html" title="Developing Data Pipelines" /><published>2020-11-27T20:18:32-05:00</published><updated>2020-11-27T20:18:32-05:00</updated><id>http://localhost:4000/data-engineering/2020/11/27/data-eng-tips</id><content type="html" xml:base="http://localhost:4000/data-engineering/2020/11/27/data-eng-tips.html">&lt;p&gt;Someone at work recently asked for some tips on developing data pipelines. They were coming with plenty of experience in data manipulation in Python (filtering, grouping, aggregating, etc) and were used to the fast iteration that you get with in-memory Pandas dataframes. It’s a bit of a transition to a world of distributed calculations where it is much slower to experiment with such data manipulations - but in return for this patience we can scale to processing terabytes of data at a time.&lt;/p&gt;
+
+&lt;p&gt;At Spotify, we use &lt;a href=&quot;https://www.github.com/spotify/scio&quot;&gt;Scio&lt;/a&gt; for this sort of processing and have thousands of jobs running every day&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. (Py)Spark, Scalding, or some other Map/Reduce style framework. I wrote a few tips that I thought might be worth sharing. Some of these are scio-specific, but most of the ideas should generalize&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
 
 &lt;p&gt;In this environment, executing your code (“submitting a job”) takes time, processing lots of data takes time (and money), inspecting results requires hunting down storage locations in some cloud storage bucket, errors are opaque and might take a long time to materialize. I put together a few tips for someone transitioning from a “quick iteration” development process to a “wait this takes &lt;em&gt;how long&lt;/em&gt; to run?” development process.&lt;/p&gt;
 

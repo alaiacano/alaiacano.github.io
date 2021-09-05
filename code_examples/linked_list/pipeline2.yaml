@@ -1,0 +1,42 @@
+apiVersion: 2
+tasks:
+  - name: "populate the list"
+    id: 1
+    action: push_values
+    config:
+      elements:
+        - 1
+        - 2
+        - 3
+        - 4
+      demo_sleep_time: 1
+  - name: "print the list"
+    action: print_list
+    id: 2
+    parent: 1
+    config:
+      demo_sleep_time: 4
+  - name: "reverse the list"
+    action: reverse_list
+    id: 3
+    parent: 1
+    config:
+      demo_sleep_time: 2
+  - name: "reverse the list a second time"
+    action: reverse_list
+    id: 5
+    parent: 3
+    config:
+      demo_sleep_time: 2
+  - name: "print the double reversed list"
+    action: print_list
+    id: 6
+    parent: 5
+    config:
+      demo_sleep_time: 2
+  - name: "print the single reversed list"
+    action: print_list
+    id: 4
+    parent: 3
+    config:
+      demo_sleep_time: 1

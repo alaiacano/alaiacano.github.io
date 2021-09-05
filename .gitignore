@@ -2,6 +2,10 @@
 # _site
 .sass-cache
 .jekyll-metadata
+_site/Gemfile
+_site/Gemfile.lock
+
+*.pyc
 
 *.gem
 *.rbc

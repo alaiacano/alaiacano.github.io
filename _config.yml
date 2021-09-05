@@ -28,9 +28,12 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+redcarpet:
+  extensions: ["footnotes"]
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
-# exclude:
+exclude:
+  - code_examples/
 #   - Gemfile
 #   - Gemfile.lock
 #   - node_modules
