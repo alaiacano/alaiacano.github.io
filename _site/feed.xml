@@ -1,11 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-09-06T09:40:11-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Adam Laiacano</title><subtitle>I'll attempt to infrequently post about ML Systems, Data Engineering, and  other things I come up with from time to time.</subtitle><entry><title type="html">My Life in the Data Mesh</title><link href="http://localhost:4000/2021/09/05/data-mesh.html" rel="alternate" type="text/html" title="My Life in the Data Mesh" /><published>2021-09-05T01:00:00-04:00</published><updated>2021-09-05T01:00:00-04:00</updated><id>http://localhost:4000/2021/09/05/data-mesh</id><content type="html" xml:base="http://localhost:4000/2021/09/05/data-mesh.html">&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;I like the concept of Data Mesh OK, but _love_ the Data Mesh drama on Twitter. 🍿&lt;/p&gt;&amp;mdash; Adam Laiacano (@adamlaiacano) &lt;a href=&quot;https://twitter.com/adamlaiacano/status/1426254483764416514?ref_src=twsrc%5Etfw&quot;&gt;August 13, 2021&lt;/a&gt;&lt;/blockquote&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-09-06T21:48:58-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Adam Laiacano</title><subtitle>I'll attempt to infrequently post about ML Systems, Data Engineering, and  other things I come up with from time to time.</subtitle><entry><title type="html">My Life in the Data Mesh</title><link href="http://localhost:4000/2021/09/05/data-mesh.html" rel="alternate" type="text/html" title="My Life in the Data Mesh" /><published>2021-09-05T01:00:00-04:00</published><updated>2021-09-05T01:00:00-04:00</updated><id>http://localhost:4000/2021/09/05/data-mesh</id><content type="html" xml:base="http://localhost:4000/2021/09/05/data-mesh.html">&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;I like the concept of Data Mesh OK, but _love_ the Data Mesh drama on Twitter. 🍿&lt;/p&gt;&amp;mdash; Adam Laiacano (@adamlaiacano) &lt;a href=&quot;https://twitter.com/adamlaiacano/status/1426254483764416514?ref_src=twsrc%5Etfw&quot;&gt;August 13, 2021&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async=&quot;&quot; src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DATA MESH&lt;/code&gt; has been a &lt;a href=&quot;https://twitter.com/jcristharif/status/1426320304591327234&quot;&gt;very&lt;/a&gt; popular &lt;a href=&quot;https://twitter.com/bernhardsson/status/1400461693197570051&quot;&gt;punching bag&lt;/a&gt; on Twitter lately. The volume of jokes has been matched by a &lt;a href=&quot;https://cnr.sh/essays/what-the-heck-data-mesh&quot;&gt;burst&lt;/a&gt; of &lt;a href=&quot;https://martinfowler.com/articles/data-mesh-principles.html&quot;&gt;blog posts&lt;/a&gt; &lt;a href=&quot;https://datameshlearning.substack.com/p/okay-but-just-wtf-is-a-data-mesh&quot;&gt;earnestly explaining&lt;/a&gt; &lt;a href=&quot;https://towardsdatascience.com/what-is-a-data-mesh-and-how-not-to-mesh-it-up-210710bb41e0&quot;&gt;what a Data Mesh is&lt;/a&gt; followed by more tweets from people saying they still don’t understand. When I first heard the term and read about it, I recognized it as the framework that I’ve been working in for the last 5 years.&lt;/p&gt;
 
+&lt;p&gt;Inspired by &lt;a href=&quot;https://www.ethanrosenthal.com/2021/02/03/feature-stores-self-service/&quot;&gt;Ethan Rosenthal’s post about feature stores&lt;/a&gt;, I’m going to write this from the perspective of someone working at a company with a Data Mesh architecture, rather than continuing to define what it is or how/when/if it’s a good idea to transition to one.&lt;/p&gt;
+
 &lt;h2 id=&quot;an-appreciation-for-scale&quot;&gt;An appreciation for scale&lt;/h2&gt;
 
-&lt;p&gt;Before joining Spotify in 2016, I was working on Machine Learning at Stripe, where we used &lt;a href=&quot;https://github.com/stripe-archive/timberlake&quot;&gt;Timberlake&lt;/a&gt; to monitor the progress of map/reduce jobs on the Hadoop cluster. There was one Hadoop cluster which was used for all data processing tasks at the time - mostly by the data team, which included the ML group. When I arrived at Spotify I suggested we use it as well since it was so handy at Stripe. Someone from the data infrastructure group quoted this clip from the Timberlake’s README:&lt;/p&gt;
+&lt;p&gt;Before joining Spotify in 2016, I was working on Machine Learning at Stripe, where we used &lt;a href=&quot;https://github.com/stripe-archive/timberlake&quot;&gt;Timberlake&lt;/a&gt; to monitor the progress of map/reduce jobs on the Hadoop cluster. There was one Hadoop cluster which was used for all data processing tasks at the time - mostly by the data team, which included the ML group. When I arrived at Spotify I suggested we use it as well since it was so handy at Stripe. Someone from the data infrastructure group quoted this clip from the Timberlake README:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;[Stripe’s] cluster has 10-40 jobs running simultaneously and about 2,000 jobs running per day. Timberlake’s performance has not been tested outside these bounds.&lt;/p&gt;
@@ -13,7 +15,135 @@
 
 &lt;p&gt;I was told it wouldn’t work because Spotify, in 2016, was often running 2,000 Hadoop jobs &lt;em&gt;concurrently&lt;/em&gt;. Ignore the number of gigabytes being processed, this is a full two orders of magnitude difference in the number of &lt;em&gt;jobs&lt;/em&gt; being run. And it wasn’t just one “data team” who was using the Hadoop cluster - it seemed like there were 100 different teams each with a couple of data engineers, all submitting &lt;a href=&quot;github.com/twitter/scalding&quot;&gt;Scalding&lt;/a&gt; or &lt;a href=&quot;https://crunch.apache.org/&quot;&gt;Crunch&lt;/a&gt; jobs to prepare data for whatever product they were working on. If you find it difficult to imagine having 100x more data pipelines running at your company, mostly by people you’ve never met, it might also be difficult to appreciate the value of a Data Mesh.&lt;/p&gt;
 
-&lt;p&gt;Fast forward five years to 2021. Spotify has &lt;a href=&quot;https://cloud.google.com/customers/featured/spotify&quot;&gt;migrated to Google Cloud&lt;/a&gt; and our data processing has moved from Hadoop to &lt;a href=&quot;https://engineering.atspotify.com/2019/05/30/scio-0-7-a-deep-dive/&quot;&gt;Scio&lt;/a&gt; (our Scala DSL for Apache Beam). The number of teams doing data engineering has grown, and keeping track of all of the data that the teams make is hard.&lt;/p&gt;</content><author><name></name></author><summary type="html">I like the concept of Data Mesh OK, but _love_ the Data Mesh drama on Twitter. 🍿&amp;mdash; Adam Laiacano (@adamlaiacano) August 13, 2021</summary></entry><entry><title type="html">Code Interviews</title><link href="http://localhost:4000/interviews/2021/08/10/interviews.html" rel="alternate" type="text/html" title="Code Interviews" /><published>2021-08-10T21:18:32-04:00</published><updated>2021-08-10T21:18:32-04:00</updated><id>http://localhost:4000/interviews/2021/08/10/interviews</id><content type="html" xml:base="http://localhost:4000/interviews/2021/08/10/interviews.html">&lt;p&gt;For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:&lt;/p&gt;
+&lt;p&gt;So now let’s imagine onboarding into such a company.&lt;/p&gt;
+
+&lt;h2 id=&quot;part-1-let-me-see-some-data&quot;&gt;Part 1: Let me see some data&lt;/h2&gt;
+
+&lt;p&gt;You’re a data-focused engineer (Data Engineer, Data Scientist, ML Engineer) joining The Company. Welcome to the team! What’s the first thing you ask once you get your laptop set up? &lt;em&gt;Where can I find the data?&lt;/em&gt; “&lt;a href=&quot;https://www.backstage.io&quot;&gt;Backstage&lt;/a&gt;,” says your teammate. So you fire up &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;thecompany.net/backstage&lt;/code&gt; and see that it’s some sort of developer portal with information about “DataSets” (one word, camel case) as well as all kinds of other things about microservices and an org chart. You browse a few “Recommended” DataSets and one catches your eye - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artist-meta.DominantGenres&lt;/code&gt;. You click on the page and see all kinds of links and information about the DataSet.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Owner - A punny team name with a link to a Slack channel and the handle for their PM.&lt;/li&gt;
+  &lt;li&gt;Delivery SLO - It says this updates daily and should be there (where!?) by 08:00 UTC. It also says it’s late today and has a link to a PagerDuty alert page.&lt;/li&gt;
+  &lt;li&gt;Schema - A list of all of the columns and their types, as well as a brief description of each. There’s an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artist_id&lt;/code&gt; (string) column and a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dominant_genres&lt;/code&gt; column, which is a list of (string, float) pairs. You wonder how long the list is, and really want to to actually read the data to find out.&lt;/li&gt;
+  &lt;li&gt;Access - There’s a disclaimer saying I don’t have access to read this data. There’s also a link to request access.&lt;/li&gt;
+  &lt;li&gt;Counters - There’s not much here, but it says there are about 10,000 rows. You expected there to be more.&lt;/li&gt;
+  &lt;li&gt;Format - It’s stored in Avro format and also in Snowflake. Two copies?&lt;/li&gt;
+  &lt;li&gt;URI - You were expecting something starting with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3://&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gs://&lt;/code&gt; or even &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hdfs://&lt;/code&gt;, or a Snowflake table name, but it says &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lyb://artist-meta.DominantGenres&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So you have a fair amount of information about what’s in here but still no way to find the data. You ask your teammate and she says “Oh, it’s in Lybrary.” That must be what &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lyb&lt;/code&gt; is short for, but you still have no idea what that means. “Type this into your terminal: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lyb ls lyb://artist-metadata.DominantGenres&lt;/code&gt;”&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lyb ls artist-metadata.DominantGenres
+
+Access denied. User adam@thecompany.com does not have read access to DataSet artist-metadata.DominantGenres
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s getting annoying to just see 1 single row of 1 DataSet at this company. You go back to Backstage and request access, which is approved almost immediately.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lyb ls artist-metadata.DominantGenres
+
+Date        |  Version Count  |  Latest Version  |  Location
+=================================================================================================================
+2020-09-01  |        1        |     912ec8       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/02/912ec8
+            |                 |                  |   snow://artist-metadata/dominant_genres/912ec8
+2020-09-02  |        1        |     42728f       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/02/42728f
+            |                 |                  |   snow://artist-metadata/dominant_genres/42728f
+2020-09-03  |        2        |     922d6e       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/03/922d6e
+            |                 |                  |   snow://artist-metadata/dominant_genres/922d6e
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;OK. So what we have here is a system that controls who can read this DataSet. DataSets are identified by some internal &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lyb://&amp;lt;DataSet&amp;gt;&lt;/code&gt; URI that points you to the actual information. In this case it seems like there are copies of this both in Google Cloud Storage and Snowflake. It also looks like every version of this DataSet is dated and versioned. You suspect that there’s some access logging going on behind the scenes as well. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lyb help&lt;/code&gt; menu is now making much more sense. Finally, we can see some data:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lyb head -n2 artist-metadata.DominantGenres 2020-09-03 gs
+{&quot;artist_id&quot;: &quot;123abc&quot;, &quot;dominant_genres&quot;: [(&quot;rock&quot;, 0.9), (&quot;pop&quot;, 0.04)]}
+{&quot;artist_id&quot;: &quot;789xyz&quot;, &quot;dominant_genres&quot;: [(&quot;rap&quot;, 0.3), (&quot;rock&quot;, 0.5), (&quot;funk&quot;, 0.2)]}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You suspect that second artist might be the band 311 and are mad that &lt;em&gt;“amber is the color of her energy”&lt;/em&gt; is now stuck in your head. Despite that, you’re starting to realize that there is a pretty significant amount of infrastructure around how and where data is stored and read, and there are probably some rules about how data is stored “in Lybrary” in order for this to all work. It’s a lot to take in for a new hire, but you head home for the day excited, and desperate to get that song out of your head.&lt;/p&gt;
+
+&lt;h2 id=&quot;part-2-let-me-see-some-dataprogramatically&quot;&gt;Part 2: Let me see some data…programatically.&lt;/h2&gt;
+
+&lt;p&gt;You’re back at your desk and ready to finally clone your team’s repo and open an IDE. You poke around at some python files in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tasks&lt;/code&gt; directory and see 12 or 13 tasks defined. You decide you’ll try writing one to see which genres are associated with the most popular artists. It turns out the “Artist Metadata” team also makes a whole suite of DataSets containing popularity rankings (globally, by country, by language, etc).&lt;/p&gt;
+
+&lt;p&gt;Naturally, you copy/paste an existing task and modify it to do what you want. It looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;GenresOfPopularArtists&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SnowflakeTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    Seems like these class-level variables are configurable parameters.
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateParameter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;top_n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Parameter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defualt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;requirements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        Oh nice, there's a `SnowflakeSource` class that takes a DataSet name and date. It must use Lybrary to find the table name.
+        &quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;dominant-genres&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SnowflakeSource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;artist-metadata.DominantGenres&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;popular-artists&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SnowflakeSource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;artist-metadata.PopularArtistsGlobal&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        Seems like I can just write a query and it formats in the tables and parameters for me.
+
+        You do an inner join between the most popular `top_n` artists and their respective genres,
+        then count how many times you see each genre.
+        &quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        SELECT artist_genres.top_genre, count(*) AS genre_count FROM
+        (SELECT artist_id, genre_name FROM  WHERE genre_score &amp;gt; .1) artist_genres
+        JOIN
+        (SELECT artist_id FROM  WHERE global_rank &amp;gt; ) popular_artists
+        ON (artist_genres.artist_id = popular_artists.artist_id)
+        GROUP BY 1
+        &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        There's a SnowflakeOutput just like a SnowflakeSource.
+
+        You wonder how teams get data into Avro/GCS as well.
+        &quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SnowflakeOutput&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data_set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;artist-analytics.GenresOfPopularArtists&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And of course this task needs to be scheduled to run regularly, which means YAML. It seems pretty simple, but you suspect this is the tip of a very large iceberg.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;GenresOfPopularArtists&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;frequency&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;daily&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;top_n&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Your teammate reviews your PR and asks if you ran it in test mode first. You did, so the PR gets approved and merged. A few minutes later you check Backstage and there’s your DataSet! It doesn’t have much information there yet, and there’s a big red warning that no SLO has been defined.&lt;/p&gt;
+
+&lt;p&gt;There’s a new section to the page, though, because it knows you’re the owner of this DataSet. You click a button that says “Backfill Data” and 5 minutes later there is a table schema displayed, counters saying there are 125 rows of data (one per genre) - just what you saw in test mode. It even shows that this DataSet depends on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artist-metadata.DominantGenres&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artist-metadata.PopularArtistsGlobal&lt;/code&gt;. To top it off, you’re in Lybrary!&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lyb ls artist-metadata.DominantGenres
+
+Date        |  Version Count  |  Latest Version  |  Location
+=================================================================================================================
+2020-09-03  |        1        |     d2a225       |   snow://artist-analytics/genres_of_popular_artists/d2a225
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;your-new-life-in-the-data-mesh&quot;&gt;Your new life in the Data Mesh&lt;/h2&gt;
+
+&lt;p&gt;So much automation is required to make this work, but you’ve only been here for two days and don’t really need to understand it all quite yet. You’ve got helpful teammates and a support channel in Slack (with 1,500 members - yikes!). What’s important is that you have a few tools at your disposal:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A place to find DataSets and a good amount of information about them.&lt;/li&gt;
+  &lt;li&gt;A handy system for keeping track of where data is, and who can read it.&lt;/li&gt;
+  &lt;li&gt;A python library for defining workflow tasks and defining inputs/outputs dynamically (via the DataSet name, not the actual location).&lt;/li&gt;
+  &lt;li&gt;A pretty impressive CI/CD system.&lt;/li&gt;
+  &lt;li&gt;Something that automatically starts running your task once it’s merged to GitHub.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are 1,000 questions to ask about who builds the infrastructure tools, the organizational implications, trust between teams, how to upgrade that python library, etc. They’re all very important questions with a huge impact on how you decide to run your large enterprise, but I don’t think answering any of them will help understand what the day-to-day life of an engineer is like. I’m hoping this post helped shed some light on that.&lt;/p&gt;</content><author><name></name></author><summary type="html">I like the concept of Data Mesh OK, but _love_ the Data Mesh drama on Twitter. 🍿&amp;mdash; Adam Laiacano (@adamlaiacano) August 13, 2021</summary></entry><entry><title type="html">Code Interviews</title><link href="http://localhost:4000/interviews/2021/08/10/interviews.html" rel="alternate" type="text/html" title="Code Interviews" /><published>2021-08-10T21:18:32-04:00</published><updated>2021-08-10T21:18:32-04:00</updated><id>http://localhost:4000/interviews/2021/08/10/interviews</id><content type="html" xml:base="http://localhost:4000/interviews/2021/08/10/interviews.html">&lt;p&gt;For most of us, interviewing is hard. And annoying, frustrating, and stressful. Most interviews these days consist of a string of 1-hour interviews covering:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Programming (sometimes 2 of these).&lt;/li&gt;

@@ -9,12 +9,144 @@ date: 2021-09-05 00:00:00 -0500
 
 `DATA MESH` has been a [very](https://twitter.com/jcristharif/status/1426320304591327234) popular [punching bag](https://twitter.com/bernhardsson/status/1400461693197570051) on Twitter lately. The volume of jokes has been matched by a [burst](https://cnr.sh/essays/what-the-heck-data-mesh) of [blog posts](https://martinfowler.com/articles/data-mesh-principles.html) [earnestly explaining](https://datameshlearning.substack.com/p/okay-but-just-wtf-is-a-data-mesh) [what a Data Mesh is](https://towardsdatascience.com/what-is-a-data-mesh-and-how-not-to-mesh-it-up-210710bb41e0) followed by more tweets from people saying they still don't understand. When I first heard the term and read about it, I recognized it as the framework that I've been working in for the last 5 years.
 
+Inspired by [Ethan Rosenthal's post about feature stores](https://www.ethanrosenthal.com/2021/02/03/feature-stores-self-service/), I'm going to write this from the perspective of someone working at a company with a Data Mesh architecture, rather than continuing to define what it is or how/when/if it's a good idea to transition to one.
+
 ## An appreciation for scale
 
-Before joining Spotify in 2016, I was working on Machine Learning at Stripe, where we used [Timberlake](https://github.com/stripe-archive/timberlake) to monitor the progress of map/reduce jobs on the Hadoop cluster. There was one Hadoop cluster which was used for all data processing tasks at the time - mostly by the data team, which included the ML group. When I arrived at Spotify I suggested we use it as well since it was so handy at Stripe. Someone from the data infrastructure group quoted this clip from the Timberlake's README:
+Before joining Spotify in 2016, I was working on Machine Learning at Stripe, where we used [Timberlake](https://github.com/stripe-archive/timberlake) to monitor the progress of map/reduce jobs on the Hadoop cluster. There was one Hadoop cluster which was used for all data processing tasks at the time - mostly by the data team, which included the ML group. When I arrived at Spotify I suggested we use it as well since it was so handy at Stripe. Someone from the data infrastructure group quoted this clip from the Timberlake README:
 
 > [Stripe's] cluster has 10-40 jobs running simultaneously and about 2,000 jobs running per day. Timberlake's performance has not been tested outside these bounds.
 
 I was told it wouldn't work because Spotify, in 2016, was often running 2,000 Hadoop jobs _concurrently_. Ignore the number of gigabytes being processed, this is a full two orders of magnitude difference in the number of _jobs_ being run. And it wasn't just one "data team" who was using the Hadoop cluster - it seemed like there were 100 different teams each with a couple of data engineers, all submitting [Scalding](github.com/twitter/scalding) or [Crunch](https://crunch.apache.org/) jobs to prepare data for whatever product they were working on. If you find it difficult to imagine having 100x more data pipelines running at your company, mostly by people you've never met, it might also be difficult to appreciate the value of a Data Mesh.
 
-Fast forward five years to 2021. Spotify has [migrated to Google Cloud](https://cloud.google.com/customers/featured/spotify) and our data processing has moved from Hadoop to [Scio](https://engineering.atspotify.com/2019/05/30/scio-0-7-a-deep-dive/) (our Scala DSL for Apache Beam). The number of teams doing data engineering has grown, and keeping track of all of the data that the teams make is hard.
+So now let's imagine onboarding into such a company.
+
+## Part 1: Let me see some data
+
+You're a data-focused engineer (Data Engineer, Data Scientist, ML Engineer) joining The Company. Welcome to the team! What's the first thing you ask once you get your laptop set up? _Where can I find the data?_ "[Backstage](https://www.backstage.io)," says your teammate. So you fire up `thecompany.net/backstage` and see that it's some sort of developer portal with information about "DataSets" (one word, camel case) as well as all kinds of other things about microservices and an org chart. You browse a few "Recommended" DataSets and one catches your eye - `artist-meta.DominantGenres`. You click on the page and see all kinds of links and information about the DataSet.
+
+- Owner - A punny team name with a link to a Slack channel and the handle for their PM.
+- Delivery SLO - It says this updates daily and should be there (where!?) by 08:00 UTC. It also says it's late today and has a link to a PagerDuty alert page.
+- Schema - A list of all of the columns and their types, as well as a brief description of each. There's an `artist_id` (string) column and a `dominant_genres` column, which is a list of (string, float) pairs. You wonder how long the list is, and really want to to actually read the data to find out.
+- Access - There's a disclaimer saying I don't have access to read this data. There's also a link to request access.
+- Counters - There's not much here, but it says there are about 10,000 rows. You expected there to be more.
+- Format - It's stored in Avro format and also in Snowflake. Two copies?
+- URI - You were expecting something starting with `s3://` or `gs://` or even `hdfs://`, or a Snowflake table name, but it says `lyb://artist-meta.DominantGenres`.
+
+So you have a fair amount of information about what's in here but still no way to find the data. You ask your teammate and she says "Oh, it's in Lybrary." That must be what `lyb` is short for, but you still have no idea what that means. "Type this into your terminal: `lyb ls lyb://artist-metadata.DominantGenres`"
+
+```
+$ lyb ls artist-metadata.DominantGenres
+
+Access denied. User adam@thecompany.com does not have read access to DataSet artist-metadata.DominantGenres
+```
+
+It's getting annoying to just see 1 single row of 1 DataSet at this company. You go back to Backstage and request access, which is approved almost immediately.
+
+```
+$ lyb ls artist-metadata.DominantGenres
+
+Date        |  Version Count  |  Latest Version  |  Location
+=================================================================================================================
+2020-09-01  |        1        |     912ec8       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/02/912ec8
+            |                 |                  |   snow://artist-metadata/dominant_genres/912ec8
+2020-09-02  |        1        |     42728f       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/02/42728f
+            |                 |                  |   snow://artist-metadata/dominant_genres/42728f
+2020-09-03  |        2        |     922d6e       |   gs://artist-metadata.DominantGenres_60e0c6/2020/09/03/922d6e
+            |                 |                  |   snow://artist-metadata/dominant_genres/922d6e
+```
+
+OK. So what we have here is a system that controls who can read this DataSet. DataSets are identified by some internal `lyb://<DataSet>` URI that points you to the actual information. In this case it seems like there are copies of this both in Google Cloud Storage and Snowflake. It also looks like every version of this DataSet is dated and versioned. You suspect that there's some access logging going on behind the scenes as well. The `lyb help` menu is now making much more sense. Finally, we can see some data:
+
+```
+$ lyb head -n2 artist-metadata.DominantGenres 2020-09-03 gs
+{"artist_id": "123abc", "dominant_genres": [("rock", 0.9), ("pop", 0.04)]}
+{"artist_id": "789xyz", "dominant_genres": [("rap", 0.3), ("rock", 0.5), ("funk", 0.2)]}
+```
+
+You suspect that second artist might be the band 311 and are mad that _"amber is the color of her energy"_ is now stuck in your head. Despite that, you're starting to realize that there is a pretty significant amount of infrastructure around how and where data is stored and read, and there are probably some rules about how data is stored "in Lybrary" in order for this to all work. It's a lot to take in for a new hire, but you head home for the day excited, and desperate to get that song out of your head.
+
+## Part 2: Let me see some data...programatically.
+
+You're back at your desk and ready to finally clone your team's repo and open an IDE. You poke around at some python files in a `tasks` directory and see 12 or 13 tasks defined. You decide you'll try writing one to see which genres are associated with the most popular artists. It turns out the "Artist Metadata" team also makes a whole suite of DataSets containing popularity rankings (globally, by country, by language, etc).
+
+Naturally, you copy/paste an existing task and modify it to do what you want. It looks like this:
+
+```python
+class GenresOfPopularArtists(SnowflakeTask):
+    """
+    Seems like these class-level variables are configurable parameters.
+    """
+    date = DateParameter()
+    top_n = Parameter(defualt=1000)
+
+    def requirements(self):
+        """
+        Oh nice, there's a `SnowflakeSource` class that takes a DataSet name and date. It must use Lybrary to find the table name.
+        """
+        return {
+            "dominant-genres": SnowflakeSource(
+                "artist-metadata.DominantGenres", self.date
+            ),
+            "popular-artists": SnowflakeSource(
+                "artist-metadata.PopularArtistsGlobal", self.date
+            ),
+        }
+
+    def query(self):
+        """
+        Seems like I can just write a query and it formats in the tables and parameters for me.
+
+        You do an inner join between the most popular `top_n` artists and their respective genres,
+        then count how many times you see each genre.
+        """
+        return """
+        SELECT artist_genres.top_genre, count(*) AS genre_count FROM
+        (SELECT artist_id, genre_name FROM {{dominant-genres}} WHERE genre_score > .1) artist_genres
+        JOIN
+        (SELECT artist_id FROM {{popular-artists}} WHERE global_rank > {{top_n}}) popular_artists
+        ON (artist_genres.artist_id = popular_artists.artist_id)
+        GROUP BY 1
+        """
+
+    def output(self):
+        """
+        There's a SnowflakeOutput just like a SnowflakeSource.
+
+        You wonder how teams get data into Avro/GCS as well.
+        """
+        return SnowflakeOutput(data_set="artist-analytics.GenresOfPopularArtists", date=date)
+```
+
+And of course this task needs to be scheduled to run regularly, which means YAML. It seems pretty simple, but you suspect this is the tip of a very large iceberg.
+
+```yaml
+- task: GenresOfPopularArtists
+  frequency: daily
+  params:
+    - top_n: 1000
+```
+
+Your teammate reviews your PR and asks if you ran it in test mode first. You did, so the PR gets approved and merged. A few minutes later you check Backstage and there's your DataSet! It doesn't have much information there yet, and there's a big red warning that no SLO has been defined.
+
+There's a new section to the page, though, because it knows you're the owner of this DataSet. You click a button that says "Backfill Data" and 5 minutes later there is a table schema displayed, counters saying there are 125 rows of data (one per genre) - just what you saw in test mode. It even shows that this DataSet depends on `artist-metadata.DominantGenres` and `artist-metadata.PopularArtistsGlobal`. To top it off, you're in Lybrary!
+
+```
+$ lyb ls artist-metadata.DominantGenres
+
+Date        |  Version Count  |  Latest Version  |  Location
+=================================================================================================================
+2020-09-03  |        1        |     d2a225       |   snow://artist-analytics/genres_of_popular_artists/d2a225
+```
+
+## Your new life in the Data Mesh
+
+So much automation is required to make this work, but you've only been here for two days and don't really need to understand it all quite yet. You've got helpful teammates and a support channel in Slack (with 1,500 members - yikes!). What's important is that you have a few tools at your disposal:
+
+- A place to find DataSets and a good amount of information about them.
+- A handy system for keeping track of where data is, and who can read it.
+- A python library for defining workflow tasks and defining inputs/outputs dynamically (via the DataSet name, not the actual location).
+- A pretty impressive CI/CD system.
+- Something that automatically starts running your task once it's merged to GitHub.
+
+There are 1,000 questions to ask about who builds the infrastructure tools, the organizational implications, trust between teams, how to upgrade that python library, etc. They're all very important questions with a huge impact on how you decide to run your large enterprise, but I don't think answering any of them will help understand what the day-to-day life of an engineer is like. I'm hoping this post helped shed some light on that.
